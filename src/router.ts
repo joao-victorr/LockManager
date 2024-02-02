@@ -28,7 +28,7 @@ router.get('/user', privateRouter, userController.read);
 router.delete('/user', privateRouter, userController.delete);
 router.put('/user', privateRouter, userController.update);
 
-router.post('/accesse', privateRouter, upload.single("image"), accessController.create);
+router.post('/access', upload.single("image"), accessController.create);
 
 router.post('/lock', privateRouter, lockController.create);
 

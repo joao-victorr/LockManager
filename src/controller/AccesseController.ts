@@ -1,6 +1,8 @@
 
 import { Request, Response } from 'express';
+
 import { prismaClient } from '../database/PrismaClient';
+import { createAccess } from '../scripts/requestFunction'
 
 
 type AcessUser = {
@@ -17,14 +19,16 @@ export class AccesseController {
 
   async create(req: Request, res: Response) {
 
-    if(!req.file || !req.body.user) {
+    const bodyJson = JSON.parse(req.body.data)
+    
+    if(!req.file) {
         return res.status(400).json({err: "faltando dados"});
       }
 
       const acessUser: AcessUser = {
-        name: req.body.name as string,
+        name: bodyJson.name as string,
         image: req.file.buffer as Buffer,
-        unidade: req.body.unidade as Array<{
+        unidade: bodyJson.unidade as Array<{
           name: string;
           ip: string;
           department: string;
@@ -40,6 +44,7 @@ export class AccesseController {
     
     res.status(201).json({data: newAcess})
 
+    createAccess(acessUser)
 
 
 

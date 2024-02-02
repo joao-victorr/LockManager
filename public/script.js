@@ -4,7 +4,7 @@ const button = document.querySelector('#button');
 const inputUserId = document.querySelector('#userId');
 const inputName = document.querySelector('#userName');
 
-
+/*
 const ipAddress = {
     loja: "192.168.1.25",
     fabrica: "192.168.201.205"
@@ -95,5 +95,67 @@ const teste = (userTeste) => {
     })
 
 };
+*/
 
 
+// type AcessUser = {
+//     name: string;
+//     image: Buffer;
+//     unidade: Array<{
+//       name: string;
+//       ip: string;
+//       department: string;
+//     }>;
+//   };
+
+
+
+
+const createUser = (user) => {
+    const formData = new FormData();
+
+    formData.append("data", JSON.stringify({
+        "name": user.name,
+        "unidade": user.unidade
+    }));
+    formData.append("image", user.image);
+
+    const url = "http://localhost:3000/access";
+    console.log(user);
+
+    fetch(url, {
+        method: "POST",
+        body: formData,
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log(data);
+    });
+
+}
+
+
+const handleButton = () => {
+
+    const user = {
+        name: inputName.value,
+        image: inputFile.files[0],
+        unidade: [
+            {
+                name: "Loja",
+                ip: "192.168.1.25",
+                department: "teste"
+            },
+            {
+                name: "Drive",
+                ip: "192.168.202.111",
+                department: "teste"
+            }
+        ]
+    };
+
+    createUser(user)
+
+}
+
+button.addEventListener("click", handleButton);
