@@ -40,6 +40,8 @@ export class UserController {
 
   async read(req: Request, res: Response) {
 
+    console.log(req.user)
+
     const dataUser: User = {
       id: req.query.id as string,
       name: req.query.name as string,

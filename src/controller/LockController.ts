@@ -17,8 +17,8 @@ export class LockController {
         }
     })
 
-    res.status(201).json({"sucesse": newLock})
-    return JSON.stringify({"sucesse": newLock})
+    return res.status(201).json({"sucesse": newLock})
+    
 
   };
 

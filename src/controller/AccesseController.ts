@@ -1,7 +1,6 @@
-import { Request, Response } from 'express';
 
+import { Request, Response } from 'express';
 import { prismaClient } from '../database/PrismaClient';
-import { loginControl } from '../scripts/loginLock';
 
 
 type AcessUser = {
@@ -38,20 +37,10 @@ export class AccesseController {
         image: acessUser.image
       }
     })
-
-    // loginControl();
-
-
-
-
-
     
-    res.status(200).json({data: newAcess})
-    
+    res.status(201).json({data: newAcess})
 
-    
 
-        
 
 
   };

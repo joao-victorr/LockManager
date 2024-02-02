@@ -1,3 +1,6 @@
+
+import axios, { AxiosResponse } from 'axios';
+
 import { sessionUnits } from "./loginLock";
 
 
@@ -21,24 +24,41 @@ async function createUser(user: AcessUser) {
 
         const url = `http://${unitIp}/create_objects.fcgi?session=${unitSession}`
 
-        await fetch(url, {
-            method: 'POST',
-            headers:{
-                "content-type": "application/json"
-            },
-            body: JSON.stringify({
-                "objects": "users",
-                "values": [{
-                    registration: '0123',
-                    name: 'Walter White',
-                    password: 'Heisenberg'
-                }]
-            })
-        })
-        .then(res => res.json())
-        .then((data: any) => {
+        // await fetch(url, {
+        //     method: 'POST',
+        //     headers:{
+        //         "content-type": "application/json"
+        //     },
+        //     body: JSON.stringify({
+        //         "objects": "users",
+        //         "values": [{
+        //             registration: '0123',
+        //             name: 'Walter White',
+        //             password: 'Heisenberg'
+        //         }]
+        //     })
+        // })
+        // .then(res => res.json())
+        // .then((data: any) => {
 
-        })
+        // })
+
+        const res = await axios.post(
+            url,
+            {
+                objects: "users",
+                values: [{
+                    registration: '',
+                    name: '',
+                    password: ''
+                }]
+            },
+            {
+                headers: {
+                    "content-type": "application/json"
+                }
+            }
+        )
 
     }
     

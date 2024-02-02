@@ -1,3 +1,6 @@
+// import fetch from 'fetch';
+import axios, { AxiosResponse } from 'axios';
+import { prismaClient } from "../database/PrismaClient";
 
 type UnitSession = Array<{
     name: String,
@@ -5,33 +8,44 @@ type UnitSession = Array<{
 }>;
 
 type Units = Array<{
+    id: String
     name: string,
     ip: string
 }>;
 
-let sessionUnits: UnitSession;
+let sessionUnits: UnitSession = [];
 
-export const loginControl = (units: Units) => {
+export const loginLock = async() => {
 
-    units.map(e => {
-        const url =`http://${e.ip}/login.fcgi`
+    const units: Units = await prismaClient.lock.findMany();
 
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                "content-type":"aplication/json"
+    units.map(async(e) => {
+        const url =`http://${e.ip}/login.fcgi`        
+
+        const res = await axios.post(
+            url,
+            {
+                login: "admin",
+                password: "Pd@1478#H"
             },
-            body: JSON.stringify({
-                "login": "admin",
-                "password": "Pd@1478#H"
-            })
-        })
-        .then(res => res.json())
-        .then((data: any) => {
-            const newUnits = {name: e.name, session: data.session}
-            sessionUnits.push(newUnits)
-        })
+            {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        )
+
+        const data = res.data;
+        const newUnits = {name: e.name, session: data.session}
+        const existingUnitIndex = sessionUnits.findIndex(unit => unit.name === newUnits.name);
+
+        if (existingUnitIndex === -1) {
+            sessionUnits.push(newUnits);
+        } else {
+            sessionUnits[existingUnitIndex].session = newUnits.session;
+        }
     })
 }
+
 
 export { sessionUnits }
