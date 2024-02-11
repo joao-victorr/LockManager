@@ -1,16 +1,13 @@
 import passport from 'passport';
 import dotenv from 'dotenv';
 import { Strategy as JWTStrategy, ExtractJwt } from 'passport-jwt';
-import { prismaClient } from '../database/PrismaClient';
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-dotenv.config();
+import { prismaClient } from '../databases/PrismaClient';
+import { UnauthorazedError } from '../helpers/apiErrors';
 
-const notAuthorizedJson = {
-    status: 401,
-    mesage: "Não autorizado"
-}
+dotenv.config();
 
 const options = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -18,30 +15,20 @@ const options = {
 }
 
 passport.use(new JWTStrategy(options, async (payload, done) => {
-
-    const user = await prismaClient.users.findUnique({
-        where: {id: payload}
-    })
-
-    if (user) {
-        return done(null, user);
-    } else {
-        return done(notAuthorizedJson, false);
-    }
-    
-
+    const user = await prismaClient.users.findUnique({where: {id: payload.id}})
+    return user ? done(null, user) : done(new UnauthorazedError("Unauthorazed user"), false);
 }))
-
-export const generateToken = (data: Object) => {
-    return jwt.sign(data, process.env.JWT_SECRET as string)
-}
 
 export const privateRouter = (req: Request, res: Response, next: NextFunction) => {
     passport.authenticate("jwt", (_err: Error, user: any) => {
-        req.user = user
-        return user ? next() : next(notAuthorizedJson)
+        req.user = user;
+        return user ? next() : next(new UnauthorazedError("Unauthorazed user"));
     })(req, res, next);
 };
+
+export const generateToken = (data: Object) => {
+    return jwt.sign({id: data}, process.env.JWT_SECRET as string, { expiresIn: '1h' })
+}
 
 
 export default passport;

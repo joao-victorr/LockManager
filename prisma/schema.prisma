@@ -11,28 +11,61 @@ datasource db {
 }
 
 model Users {
-  id String @id @default(cuid())
-  name String
-  email String @unique
+  id       String @id @default(cuid())
+  name     String
+  email    String @unique
   password String
 
   @@map("users")
 }
 
-
 model Lock {
-  id String @id @default(cuid())
-  name String @unique
-  ip String @unique
+  id             String           @id @default(cuid())
+  name           String           @unique
+  ip             String           @unique
+  user           String
+  password       String
+  AccessLock     AccessLock[]
+  DepartmentLock DepartmentLock[]
 
   @@map("lock")
 }
 
 model Access {
-  id String @id @default(cuid())
-  name String
-  image Bytes
-  
+  id         String       @id @default(cuid())
+  name       String
+  image      Bytes
+  AccessLock AccessLock[]
 
   @@map("access")
+}
+
+model Department {
+  id             String           @id @default(cuid())
+  name           String
+  DepartmentLock DepartmentLock[]
+
+  @@map("department")
+}
+
+model AccessLock {
+  id        String @id @default(cuid())
+  code      Int
+  id_lock   String
+  lock      Lock   @relation(fields: [id_lock], references: [id])
+  id_access String
+  access    Access @relation(fields: [id_access], references: [id])
+
+  @@map("access_lock")
+}
+
+model DepartmentLock {
+  id            String     @id @default(cuid())
+  code          Int
+  id_lock       String
+  lock          Lock       @relation(fields: [id_lock], references: [id])
+  id_department String
+  department    Department @relation(fields: [id_department], references: [id])
+
+  @@map("department_lock")
 }

@@ -1,46 +1,48 @@
 import { Request, Response } from 'express';
-import { prismaClient } from '../database/PrismaClient';
+import { prismaClient } from '../databases/PrismaClient';
+import bcrypt from 'bcrypt';
 
+import { User } from '../helpers/types';
+import { BadResquestError } from '../helpers/apiErrors';
 
-type User = {
-  id: string;
-  name: string;
-  email: string;
-}
 
 export class UserController {
 
   async create(req: Request, res: Response) {
 
-    const dataUser = {
+    const user = {
       name: req.body.name as string,
-      email: req.body.email.toLowerCase() as string,
+      email: req.body.email.toLowerCase().trim as string,
       password: req.body.password as string
     };
 
-    try {
-      const newUser = await prismaClient.users.create({
-        data: {
-          email: dataUser.email,
-          name: dataUser.name,
-          password: dataUser.password,
-        },
-      });
-  
-      return res.status(201).json({ "Cadastro realizado": newUser });
-    } catch (err: any) {
-      if (err.code === 'P2002' && err.meta?.target?.includes('email')) {
-        return res.status(400).json({ "Error": "E-mail já cadastrado." });
-      }
-      console.error(err);
-      return res.status(500).json({ "Error": "Erro interno do servidor." });
+    if(!user.email || !user.password || !user.name) {
+      throw new BadResquestError("Email Already Exists")
     }
+
+    const varifyEmail = await prismaClient.users.findUnique({where: {email: user.email}})
+
+    if(varifyEmail) {
+      throw new BadResquestError(("Email exist"))
+    }
+
+    user.password = await bcrypt.hash(user.password, 10)
+
+    const newUser = await prismaClient.users.create({
+      data: {
+        email: user.email,
+        name: user.name,
+        password: user.password,
+      },
+    });
+
+    const {password:_, ...userData} = newUser
+
+    return res.status(201).json({ "New User": userData });
 
   };
 
   async read(req: Request, res: Response) {
-
-    console.log(req.user)
 
     const dataUser: User = {
       id: req.query.id as string,
@@ -49,33 +51,46 @@ export class UserController {
     };
 
     if (dataUser.id) {
-      
-      const user = await prismaClient.users.findUnique({ where: { id: dataUser.id }})
+      const users = await prismaClient.users.findUnique({ where: { id: dataUser.id }})
 
-      return res.json( { user } )
+      const {password:_, ...usersData} = users
+      return res.json( { usersData } )
+    }
 
+    if (dataUser.email) {
+      const user = await prismaClient.users.findUnique({
+        where: { email: dataUser.email.toLowerCase().trim() },
+      });
+
+      const {password:_, ...usersData} = user
+      return res.json( { usersData } )
     }
 
     if (dataUser.name) {
-      const user = await prismaClient.users.findMany({
+      const users = await prismaClient.users.findMany({
         where: {
           name: {
             contains: dataUser.name
           }
         }
       })
-      return res.json( { user } )
-    }
-    
-    if (dataUser.email) {
-      const user = await prismaClient.users.findMany({
-        where: { email: dataUser.email },
-      });
-      return res.json( { user } )
+
+      const usersData = users.map((e: any) => {
+        const {password:_, ...user} = e
+        return user
+      })
+
+      return res.json( { usersData } )
     }
 
-    const user = await prismaClient.users.findMany();
-    return res.json( { user });
+    const users = await prismaClient.users.findMany();
+
+    const usersData = users.map((e: any) => {
+      const {password:_, ...user} = e
+      return user
+    })
+
+    return res.json( { usersData } )
 
   };
 
