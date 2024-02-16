@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { prismaClient } from '../databases/PrismaClient';
+import bcrypt from 'bcrypt';
+
 import { generateToken } from '../middleware/PassportMiddleware';
 import { loginLock } from '../LockController/LoginLock';
 
@@ -12,12 +14,23 @@ export class LoginController {
       throw new BadResquestError("Data Not Found")
     }
 
-    const { email, password } = req.body
+    const dataUser = {
+      email: req.body.email as string,
+      password: req.body.password as string
+    }
 
-    const user = await prismaClient.users.findUnique({where: {email}})
+    const user = await prismaClient.usersWeb.findUnique({where: {email: dataUser.email}})
     
     if(!user) {
-      throw new UnauthorazedError("User or password not found")  
+      throw new UnauthorazedError("Email or password not found")  
+    }
+
+    const passwordHash = user.password
+
+    const varifyPassword = await bcrypt.compare(dataUser.password, passwordHash)
+
+    if(!varifyPassword) {
+      throw new UnauthorazedError("Email or password not found")  
     }
 
     await loginLock();

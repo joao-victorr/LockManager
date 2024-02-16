@@ -15,7 +15,7 @@ const options = {
 }
 
 passport.use(new JWTStrategy(options, async (payload, done) => {
-    const user = await prismaClient.users.findUnique({where: {id: payload.id}})
+    const user = await prismaClient.usersWeb.findUnique({where: {id: payload.id}})
     return user ? done(null, user) : done(new UnauthorazedError("Unauthorazed user"), false);
 }))
 
@@ -27,7 +27,7 @@ export const privateRouter = (req: Request, res: Response, next: NextFunction) =
 };
 
 export const generateToken = (data: Object) => {
-    return jwt.sign({id: data}, process.env.JWT_SECRET as string, { expiresIn: '1h' })
+    return jwt.sign({id: data}, process.env.JWT_SECRET as string, { expiresIn: '24h' })
 }
 
 
