@@ -3,14 +3,18 @@ import "express-async-errors";
 import express, { ErrorRequestHandler, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
+import cors from "cors";
 
 import passport from 'passport';
 import { router } from './router'
 import { ErrorMiddleware } from "./middleware/ErrorMiddleware";
 import { BadResquestError } from "./helpers/apiErrors";
 
+
 dotenv.config();
 const server = express();
+
+server.use(cors())
 
 server.use(express.urlencoded({ extended: true }));
 server.use(express.json());

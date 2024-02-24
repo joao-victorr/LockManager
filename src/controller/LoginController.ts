@@ -19,22 +19,22 @@ export class LoginController {
       password: req.body.password as string
     }
 
-    const user = await prismaClient.usersWeb.findUnique({where: {email: dataUser.email}})
+    const data = await prismaClient.usersWeb.findUnique({where: {email: dataUser.email}})
     
-    if(!user) {
+    if(!data) {
       throw new UnauthorazedError("Email or password not found")  
     }
 
-    const passwordHash = user.password
-
-    const varifyPassword = await bcrypt.compare(dataUser.password, passwordHash)
+    const varifyPassword = await bcrypt.compare(dataUser.password, data.password)
 
     if(!varifyPassword) {
       throw new UnauthorazedError("Email or password not found")  
     }
 
+    const { password: _, ...user } = data
+
     await loginLock();
     const token = generateToken(user.id);
-    return res.status(200).json({success: true, token: token});
+    return res.status(200).json({user, token: token});
   };
 }
