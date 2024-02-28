@@ -1,0 +1,156 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL_MYSQL")
+}
+
+model UsersWeb {
+  id       String @id @default(cuid())
+  name     String
+  email    String @unique
+  password String
+
+  @@map("users_web")
+}
+
+model Locks {
+  id             String           @id @default(cuid())
+  name           String
+  ip             String           @unique
+  users          String
+  password       String
+  UsersLocks     UsersLocks[]
+  GroupsLocks    GroupsLocks[]
+  TimeZonesLocks TimeZonesLocks[]
+  TimeSpansLocks TimeSpansLocks[]
+  AcccessRrules  AcccessRules[]
+  UsersGroups    UsersGroups[]
+
+  @@map("locks")
+}
+
+model Users {
+  id          String        @id @default(cuid())
+  name        String
+  image       Bytes
+  UsersLocks  UsersLocks[]
+  UsersGroups UsersGroups[]
+
+  @@map("users")
+}
+
+model UsersGroups {
+  id        String @id @default(cuid())
+  id_locks  String
+  locks     Locks  @relation(fields: [id_locks], references: [id])
+  id_users  String
+  users     Users  @relation(fields: [id_users], references: [id])
+  id_groups String
+  groups    Groups @relation(fields: [id_groups], references: [id])
+
+  @@map("users_groups")
+}
+
+model Groups {
+  id            String         @id @default(cuid())
+  name          String
+  GroupsLocks   GroupsLocks[]
+  AcccessRrules AcccessRules[]
+  UsersGroups   UsersGroups[]
+
+  @@map("groups")
+}
+
+model UsersLocks {
+  id       String @id @default(cuid())
+  code     Int
+  id_locks String
+  locks    Locks  @relation(fields: [id_locks], references: [id])
+  id_users String
+  users    Users  @relation(fields: [id_users], references: [id])
+
+  @@map("users_locks")
+}
+
+model GroupsLocks {
+  id        String @id @default(cuid())
+  code      Int
+  id_locks  String
+  locks     Locks  @relation(fields: [id_locks], references: [id])
+  id_groups String
+  groups    Groups @relation(fields: [id_groups], references: [id])
+
+  @@map("groups_locks")
+}
+
+model TimeZones {
+  id             String           @id @default(cuid())
+  name           String
+  TimeSpans      TimeSpans[]
+  TimeZonesLocks TimeZonesLocks[]
+  AcccessRrules  AcccessRules[]
+
+  @@map("time_zones")
+}
+
+model TimeZonesLocks {
+  id           String    @id @default(cuid())
+  code         Int
+  id_locks     String
+  locks        Locks     @relation(fields: [id_locks], references: [id])
+  id_TimeZones String
+  TimeZones    TimeZones @relation(fields: [id_TimeZones], references: [id])
+
+  @@map("time_zones_locks")
+}
+
+model TimeSpans {
+  id             String           @id @default(cuid())
+  time_zones_id  String
+  time_zones     TimeZones        @relation(fields: [time_zones_id], references: [id])
+  start          Int
+  end            Int
+  sun            Int
+  mon            Int
+  tue            Int
+  wed            Int
+  thu            Int
+  fri            Int
+  sat            Int
+  hol1           Int
+  hol2           Int
+  hol3           Int
+  TimeSpansLocks TimeSpansLocks[]
+
+  @@map("time_spans")
+}
+
+model TimeSpansLocks {
+  id           String    @id @default(cuid())
+  code         Int
+  id_locks     String
+  locks        Locks     @relation(fields: [id_locks], references: [id])
+  id_TimeSpans String
+  TimeSpans    TimeSpans @relation(fields: [id_TimeSpans], references: [id])
+
+  @@map("time_spans_locks")
+}
+
+model AcccessRules {
+  id           String    @id @default(cuid())
+  code         Int
+  id_locks     String
+  locks        Locks     @relation(fields: [id_locks], references: [id])
+  id_TimeZones String
+  timeZones    TimeZones @relation(fields: [id_TimeZones], references: [id])
+  id_groups    String
+  groups       Groups    @relation(fields: [id_groups], references: [id])
+
+  @@map("acccess_rules")
+}
