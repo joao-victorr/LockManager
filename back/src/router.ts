@@ -29,7 +29,7 @@ const usersGroupsController = new UsersGroupsController;
 router.post('/login', loginController.login)
 router.get('/token', privateRouter, loginController.token)
 
-router.post('/user_web', privateRouter, userWebController.create);
+router.post('/user_web', userWebController.create);
 router.get('/user_web', privateRouter, userWebController.read);
 router.delete('/user_web', privateRouter, userWebController.delete);
 router.put('/user_web', privateRouter, userWebController.update);

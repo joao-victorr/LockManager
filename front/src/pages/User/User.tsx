@@ -11,13 +11,21 @@ export const User = () => {
   const api = useApi();
   const [listUser, setListUser] = useState<DataUser[]>();
   
-  const fetchData = async () => {
-    const userData = await api.getUser();
-    setListUser(userData);
-  };
   useEffect(() => {
+    const fetchData = async () => {
+      const userData = await api.getUser();
+      setListUser(userData);
+    };
     fetchData();
   }, []);
+
+
+  const [isVisible, setIsVisible] = useState(false);
+
+  const handleAddUser = () => {
+    setIsVisible(true);
+  };
+
 
   const renderUser = (listUser: DataUser[]) => {
 
@@ -42,7 +50,7 @@ export const User = () => {
 
       return (<tr key={user.id}>
         <td className='checkbox'><input type="checkbox" /></td>
-        <td className="icon"><img src={icon} alt="" /></td>
+        <td className="icon"><img src={base64Image} alt="" /></td>
         <td className="name">{user.name}</td>
         <td className="department">{user.UsersGroups.length}</td>
         <td className="locks">{user.UsersLocks.length}</td>
@@ -59,9 +67,10 @@ export const User = () => {
       <Header />
       <main>
         <Nav />
-        <div className='card'>
+        {!isVisible && (
+          <div className='card'>
           <div className='buttonArea' >
-            <button className='add' >Adicionar</button>
+            <button className='add' onClick={handleAddUser}>Adicionar</button>
             <button className='remuve' >Remover</button>
           </div>
 
@@ -99,6 +108,19 @@ export const User = () => {
             </table>
           </div>
         </div>
+        )}
+
+        {isVisible && (
+        <div className='add-user'>
+          <div className='user-area-left'>
+            ...
+          </div>
+          <div className='user-area-right'>
+            ...
+          </div>
+        </div>
+      )}
+
       </main>
     </>
   );

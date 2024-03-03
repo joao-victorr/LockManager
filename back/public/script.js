@@ -4,7 +4,7 @@ const button = document.querySelector('#button');
 const inputUserId = document.querySelector('#userId');
 const inputName = document.querySelector('#userName');
 
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNsc2h3ZzFkcDAwMDAxMmJubDNjM3ZjaGYiLCJpYXQiOjE3MDkwMDE5MzIsImV4cCI6MTcwOTAwMjgzMn0.LIVbPCruL-hlLbkBa7EyaJunFTqFazWQQJJx1H_Cg2k";
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNsdDd5dmZ5eTAwMDBwbHBxYmI5c3cwbTAiLCJpYXQiOjE3MDkyNTU5ODMsImV4cCI6MTcwOTI1Njg4M30.ivYYB5hPeUVR8o0OWG30ESbjieHTv7PNvltjkPlKgVU";
 const createUser = (user) => {
     const formData = new FormData();
     const headers = new Headers();
@@ -38,8 +38,8 @@ const handleButton = () => {
         name: inputName.value,
         image: inputFile.files[0],
         locks: [
-            {"id": "clsjgct090002hxaw2nb24th5"},
-            {"id": "clshx75pp0000zq45n90zkcp8"}
+            {"id": "clt7z0m2n0003plpq4daxfdrm"},
+            {"id": "clt7z19x20004plpq6gz0c7nv"},
         ]
     };
 
