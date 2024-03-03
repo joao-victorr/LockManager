@@ -19,3 +19,13 @@ export type DataUser = {
       id_group: string;
     }>;
 }
+
+export type DataLock = {
+  id: string;
+  name: string;
+  ip: string;
+  GroupsLocks: Array<{
+    id_group: string;
+    name: string
+  }>,
+}
