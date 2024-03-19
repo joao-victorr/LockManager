@@ -58,7 +58,7 @@ export class GroupsController {
         include: {
           GroupsLocks: {
             select: {
-              id_lock: true,
+              id_locks: true,
               code: true,
               locks: {
                 select: {
@@ -78,9 +78,9 @@ export class GroupsController {
         include: {
           GroupsLocks: {
             select: {
-              id_lock: true,
+              id_locks: true,
               code: true,
-              lock: {
+              locks: {
                 select: {
                   name: true                  
                 }

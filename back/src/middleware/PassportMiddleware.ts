@@ -28,7 +28,7 @@ export const privateRouter = (req: Request, res: Response, next: NextFunction) =
 };
 
 export const generateToken = (data: Object) => {
-    return jwt.sign({id: data}, process.env.JWT_SECRET as string, { expiresIn: '15m' })
+    return jwt.sign({id: data}, process.env.JWT_SECRET as string, { expiresIn: '1d' })
 }
 
 

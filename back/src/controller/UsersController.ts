@@ -23,6 +23,7 @@ export class UsersController {
         locks: bodyJson.locks
     };
 
+
     const newUser = await prismaClient.$transaction(async (tx: any) => {
       const user = await tx.users.create({ 
         data: {

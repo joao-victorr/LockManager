@@ -93,16 +93,23 @@ export type AccessRules = {
   TimeZonesLocks: Array<{code: number}>
 }
 
-export type UserGroup =  {
-  id: string,
-  UsersLocks: Array<{ code: number }>,
-  GroupsLocks: Array<{ code: number }>
-}
-
 export type DataUserGroup = {
   id_user: string
   locks: Array<{
     id_lock: string
-    id_group: string
+    gruops: Array<{
+      id: string
+    }>
   }>
+}
+
+export type UserGroup = {
+  codeUserLock: number,
+  lock: {
+    id_lock: string;
+    codeGruops: Array<{
+      code: number;
+      id_groups: string
+    }>
+  }
 }

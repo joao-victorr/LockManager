@@ -1,5 +1,5 @@
 import axios from "axios";
-import { DataUser } from "../Types/User";
+import { DataLock, DataUser, NewUser, NewUserGruop } from "../Types/User";
 // import env from "dotenv";
 
   const api = axios.create({
@@ -29,6 +29,21 @@ export const useApi = () => ({
     await api.post("/logout")  
   },
 
+  getLocks: async () => {
+    const token = localStorage.getItem("authToken");
+    const headers = {
+      'Authorization': `Bearer ${token}`
+    };
+
+    const res = await api.get("/locks",
+    {
+      headers: headers
+    }
+    )
+    const locks: DataLock[] = res.data.Locks
+    return locks;
+  },
+
   getUser: async (id?: string, name?: string, email?: string) => {
 
     const token = localStorage.getItem("authToken");
@@ -49,7 +64,55 @@ export const useApi = () => ({
     }
     )
     const users: DataUser[] = res.data.allUsers
-    return users
+    return users;
+  },
+
+  postUser: async (data: NewUser) => {
+    const token = localStorage.getItem("authToken");
+    const body = new FormData();
+
+    body.append("data", JSON.stringify({
+      "name": data.name,
+      "locks": data.locks
+    }));
+    body.append("image", data.image);
+
+    const headers = {
+      'Authorization': `Bearer ${token}`
+    };
+    
+    const res = await api.post("/users",
+    body,
+    {
+      headers: headers
+    })
+    const users = res.data.data
+    return users;
+
+  },
+
+  postUserGroup: async (data: NewUserGruop) => {
+    const token = localStorage.getItem("authToken");
+    const body = new FormData();
+
+    body.append("data", JSON.stringify({
+      "id_user": data.id_user,
+      "locks": data.locks
+    }));
+
+    const headers = {
+      'Authorization': `Bearer ${token}`
+    };
+    
+    const res = await api.post("/user_group",
+    body,
+    {
+      headers: headers
+    })
+    const userGruop = res.data.data
+    return userGruop;
+
   }
+
 })
 

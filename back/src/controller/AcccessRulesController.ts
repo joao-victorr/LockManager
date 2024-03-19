@@ -19,7 +19,7 @@ export class AcccessRulesController {
     }
 
     const dataAccessRules = await Promise.all(accessRules.locks.map(async (lock) => {
-      const locks: AccessRules = await prismaClient.locks.findUnique({
+      const locks: AccessRules | null = await prismaClient.locks.findUnique({
         where: { id: lock.id },
         select: {
           id: true,
@@ -38,6 +38,10 @@ export class AcccessRulesController {
         }
       });
   
+      if (!locks) {
+        throw new BadResquestError("Lock not found");
+      }
+      
       return locks;
     }))
 
