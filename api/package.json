@@ -1,16 +1,16 @@
 {
-  "name": "locks_manager",
+  "name": "lock_manager",
   "version": "1.0.0",
   "description": "",
   "main": "dist/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dist/server.js &",
+    "start": "node dist/server.js",
     "build": "tsc",
+    "deploy": "npx prisma migrate deploy &",
     "dev": "nodemon src/server.ts",
     "studio": "npx prisma studio",
-    "migrate": "npx prisma migrate dev",
-    "deploy": "npx prisma migrate deploy &"
+    "migrate": "npx prisma migrate dev"
   },
   "author": "Joao-victorr",
   "license": "ISC",
@@ -32,7 +32,7 @@
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
-    "@prisma/client": "^5.7.1",
+    "@prisma/client": "^5.11.0",
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.5",

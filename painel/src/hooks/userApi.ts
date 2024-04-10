@@ -1,10 +1,10 @@
 import axios from "axios";
 import { DataLock, DataUser, NewUser, NewUserGruop } from "../Types/User";
-// import env from "dotenv";
 
-  const api = axios.create({
-    baseURL: "http://192.168.1.26:3000"
-  })
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_BASE_URL_API,
+})
 
 export const useApi = () => ({
   validateToken: async (token: string) => {

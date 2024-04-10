@@ -18,11 +18,15 @@ server.use(cors())
 
 server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
-server.use(express.static(path.join(__dirname, '../public')));
+// server.use(express.static(path.join(__dirname, '../public')));
 
 server.use(passport.initialize());
 
 server.use(router)
+
+server.use("/", (req: Request, res: Response) => {
+    res.send("Hello World")
+})
 
 server.use((req: Request, res: Response) => {
     throw new BadResquestError("Router Not Found")
