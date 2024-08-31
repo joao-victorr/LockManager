@@ -4,13 +4,13 @@
   "description": "",
   "main": "dist/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node dist/server.js",
     "build": "tsc",
     "deploy": "npx prisma migrate deploy &",
     "dev": "nodemon src/server.ts",
     "studio": "npx prisma studio",
-    "migrate": "npx prisma migrate dev"
+    "migrate": "npx prisma migrate dev",
+    "seed": "ts-node ./prisma/seed.js"
   },
   "author": "Joao-victorr",
   "license": "ISC",

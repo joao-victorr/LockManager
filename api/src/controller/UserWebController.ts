@@ -27,13 +27,13 @@ export class UserWebController {
       throw new BadResquestError(("Email exist"))
     }
 
-    user.password = await bcrypt.hash(user.password, 10)
+    const hashPassword = user.password = await bcrypt.hash(user.password, 10)
 
     const newUser = await prismaClient.usersWeb.create({
       data: {
         email: user.email,
         name: user.name,
-        password: user.password,
+        password: hashPassword,
       },
       select: {
         id: true,

@@ -1,53 +1,41 @@
 version: "3"
 
-volumes:
-  shared_volume:
-
-
-networks:
-  lockManager:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.19.0.0/16  # Definindo a sub-rede para a rede lockManager
-
 services:
   api:  
     build: api/
     container_name: lock-manager-api
-    command: sh -c ". checkAndDeploy.sh"
     restart: always
     ports:
       - "3000:3000"
     volumes:
-      - shared_volume:/usr/app
+      - api_data:/usr/app/api
     networks:
-      lockManager:
-        ipv4_address: 172.19.0.3  # Endereço IP fixo para o serviço API
+      - lockManager
+    depends_on:
+      - db
+    env_file:
+      - .env
 
-  painel:
-    build: painel/
-    container_name: lock-manager-painel
-    command: npm start
-    restart: always 
-    ports:
-      - "4000:4000"
-    volumes:
-      - shared_volume:/usr/app
-    networks:
-      lockManager:
-        ipv4_address: 172.19.0.4  # Endereço IP fixo para o serviço Painel
   db:
-    image: mysql:latest
+    image: mysql:8.0
     container_name: lock-manager-db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: Mysql.Root.123
+      MYSQL_DATABASE: lockmanager
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
     ports:
       - "3307:3306"
     volumes:
-      - shared_volume:/usr/app
-      - ./api/prisma/migrations:/docker-entrypoint-initdb.d:ro
+      - db_data:/var/lib/mysql
     networks:
-      lockManager:
-        ipv4_address: 172.19.0.2  # Endereço IP fixo para o serviço de banco de dados
+      - lockManager
+
+
+volumes:
+  api_data:
+  db_data:
+
+networks:
+  lockManager:
