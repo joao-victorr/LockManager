@@ -6,16 +6,20 @@
   "scripts": {
     "start": "node dist/server.js",
     "build": "tsc",
-    "deploy": "npx prisma migrate deploy &",
+    "deploy": "npx prisma migrate deploy",
     "dev": "nodemon src/server.ts",
     "studio": "npx prisma studio",
     "migrate": "npx prisma migrate dev",
-    "seed": "ts-node ./prisma/seed.js"
+    "seed": "npx prisma db seed",
+    "prod": "npm run deploy && npm run seed && npm start"
+  },
+  "prisma": {
+    "seed": "node dist/databases/seed.js"
   },
   "author": "Joao-victorr",
   "license": "ISC",
   "dependencies": {
-    "@types/cors": "^2.8.17",
+    "@prisma/client": "^5.19.0",
     "axios": "^1.6.7",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
@@ -28,18 +32,18 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "path": "^0.12.7",
-    "prisma": "^5.7.1",
-    "ts-node": "^10.9.2"
+    "prisma": "^5.7.1"
   },
   "devDependencies": {
-    "@prisma/client": "^5.11.0",
     "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/multer": "^1.4.11",
-    "@types/node": "^20.10.6",
+    "@types/node": "^20.16.2",
     "@types/passport-jwt": "^4.0.1",
     "nodemon": "^3.0.2",
-    "typescript": "^5.3.3"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
   }
 }

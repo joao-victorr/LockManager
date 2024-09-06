@@ -1,19 +1,29 @@
-FROM node:latest
+FROM node:20.11.0 as builder
 
-WORKDIR /usr/app/api
+WORKDIR /backend
 
-COPY package*.json ./
+COPY package*.json .
 RUN npm install
 
 COPY . .
+
 RUN npm run build
 
-# Instalar o cliente MySQL
-RUN apt-get update && apt-get install -y mysql-client
+FROM node:20.11.0-alpine
 
-COPY wait-for-db.sh /usr/local/bin/wait-for-db.sh
-RUN chmod +x /usr/local/bin/wait-for-db.sh
+WORKDIR /backend
+
+COPY --from=builder /backend/dist ./dist
+COPY package*.json .
+
+COPY --from=builder /backend/prisma ./prisma
+COPY --from=builder /backend/public ./public
+# COPY --from=builder /backend/package.json ./
+# COPY --from=builder /backend/package-lock.json ./
+
+RUN npm install --omit=dev
+
 
 EXPOSE 3000
 
-ENTRYPOINT ["wait-for-db.sh", "npm", "start"]
+CMD ["npm", "run", "prod"]

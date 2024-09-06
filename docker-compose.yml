@@ -1,21 +1,6 @@
 version: "3"
 
 services:
-  api:  
-    build: api/
-    container_name: lock-manager-api
-    restart: always
-    ports:
-      - "3000:3000"
-    volumes:
-      - api_data:/usr/app/api
-    networks:
-      - lockManager
-    depends_on:
-      - db
-    env_file:
-      - .env
-
   db:
     image: mysql:8.0
     container_name: lock-manager-db
@@ -27,15 +12,30 @@ services:
       MYSQL_PASSWORD: mypassword
     ports:
       - "3307:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -umyuser -pmysqpassword"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
     volumes:
       - db_data:/var/lib/mysql
-    networks:
-      - lockManager
 
+
+  api:
+    build: ./api
+    container_name: lock-manager-api
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - api_data:/usr/app/api
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
 
 volumes:
   api_data:
   db_data:
-
-networks:
-  lockManager:

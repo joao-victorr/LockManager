@@ -107,10 +107,7 @@ export class LocksController {
       }
     })
 
-    if(countAccessLock !== 0) {
-      throw new BadResquestError("unit contains registered access.")
-    }
-    if(countDepartmentLock !== 0) {
+    if(countAccessLock !== 0 || countDepartmentLock !== 0) {
       throw new BadResquestError("unit contains registered access.")
     }
 
