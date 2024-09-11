@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { allLocksSessions } from "../LoginLock";
-import { UserGroup } from '../../helpers/types';
+import type { UserGroup } from '../../helpers/types';
 import { BadResquestError } from '../../helpers/apiErrors';
 
 /*----------------------------------------------------------------*/

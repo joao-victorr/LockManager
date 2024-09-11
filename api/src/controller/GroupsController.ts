@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { prismaClient } from '../databases/PrismaClient';
 
-import { Group, DataLockCode } from '../helpers/types';
+import type { Group, DataLockCode } from '../helpers/types';
 import { ApiError, BadResquestError } from '../helpers/apiErrors';
 import { createGroupLocks } from '../LockController/Groups/CreateGroupsLocks';
 // import { deletDataLock } from '../LockController/Groups/DeleteGroupsLocks';
@@ -20,7 +20,7 @@ export class GroupsController {
     
     const codeAllGroupsLocks: Array<DataLockCode> = await createGroupLocks(group);
     
-    const newGroup = await prismaClient.$transaction(async (tx: any) => {
+      const newGroup = await prismaClient.$transaction(async (tx: any) => {
       const newGroup = await tx.groups.create({
         data: {
           name: group.name

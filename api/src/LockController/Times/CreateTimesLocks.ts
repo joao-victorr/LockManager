@@ -1,14 +1,14 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { type AxiosResponse } from 'axios';
 
 import { allLocksSessions } from "../LoginLock";
-import { DataTimesLockCode, Times } from '../../helpers/types';
+import type { DataTimesLockCode, Times } from '../../helpers/types';
 import { ApiError, BadResquestError } from '../../helpers/apiErrors';
 
 //Function to create locks for Times_Zones and Times_Spans
 export async function createTimesLocks(data: Times) {
   const allTimesCodesLocks : Array<DataTimesLockCode> = [];
 
-  if(data.locks.length == 0) {
+  if(data.locks.length === 0) {
     throw new BadResquestError("Unit is empty")
   }
 

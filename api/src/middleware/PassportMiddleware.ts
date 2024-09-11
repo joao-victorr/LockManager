@@ -1,7 +1,7 @@
 import passport from 'passport';
 import dotenv from 'dotenv';
 import { Strategy as JWTStrategy, ExtractJwt } from 'passport-jwt';
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
 import { prismaClient } from '../databases/PrismaClient';
@@ -20,6 +20,7 @@ passport.use(new JWTStrategy(options, async (payload, done) => {
 }))
 
 export const privateRouter = (req: Request, res: Response, next: NextFunction) => {
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     passport.authenticate("jwt", (_err: Error, user: any) => {
         const { password: _, ...dataUser } = user
         req.user = dataUser;
@@ -27,7 +28,7 @@ export const privateRouter = (req: Request, res: Response, next: NextFunction) =
     })(req, res, next);
 };
 
-export const generateToken = (data: Object) => {
+export const generateToken = (data: string) => {
     return jwt.sign({id: data}, process.env.JWT_SECRET as string, { expiresIn: '1d' })
 }
 

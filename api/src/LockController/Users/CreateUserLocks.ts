@@ -1,8 +1,8 @@
 
-import axios, { AxiosResponse } from 'axios';
+import axios, { type AxiosResponse } from 'axios';
 
 import { allLocksSessions } from "../LoginLock";
-import { Users, DataLockCode } from '../../helpers/types';
+import type { Users, DataLockCode } from '../../helpers/types';
 import { BadResquestError } from '../../helpers/apiErrors';
 
 //Function to create locks for User

@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
+import type { Request, Response, } from 'express';
 import { prismaClient } from '../databases/PrismaClient';
 import bcrypt from 'bcrypt';
 
-import { UserWeb } from '../helpers/types';
+import type { UserWeb } from '../helpers/types';
 import { BadResquestError } from '../helpers/apiErrors';
 import { generateToken } from '../middleware/PassportMiddleware';
 
@@ -27,7 +27,7 @@ export class UserWebController {
       throw new BadResquestError(("Email exist"))
     }
 
-    const hashPassword = user.password = await bcrypt.hash(user.password, 10)
+    const hashPassword = await bcrypt.hash(user.password, 10)
 
     const newUser = await prismaClient.usersWeb.create({
       data: {
@@ -156,9 +156,10 @@ export class UserWebController {
 
       return res.json({ success: true});
 
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     } catch (err: any) {
 
-      if(err.code == 'P2025') {
+      if(err.code === 'P2025') {
         return res.json({ "Error": "Registro não encontrado" });
       }
 

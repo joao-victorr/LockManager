@@ -116,6 +116,12 @@ Abaixo está uma descrição detalhada de cada rota disponível, os dados espera
       }
       ```
 
+#
+
+### Gerenciamento de User_Web
+
+#
+
 ### Gerenciamento de Dispositivos (Locks)
 
 As rotas a seguir são usadas para gerenciar dispositivos de leitura facial da Control ID.
@@ -191,11 +197,9 @@ As rotas a seguir são usadas para gerenciar dispositivos de leitura facial da C
       }
       ```
 
-
-#### 3. Em breve      
-<!-- 
-#### 3. Atualizar Informações de um Dispositivo
-
+ 
+#### 3. Atualizar Informações de um Dispositivo (EM BREVE)
+<!--
 - **PUT `/locks/:id`**
   - **Descrição**: Atualiza as informações de um dispositivo existente.
   - **Cabeçalhos**: Requer `Authorization: Bearer jwt_token`.
