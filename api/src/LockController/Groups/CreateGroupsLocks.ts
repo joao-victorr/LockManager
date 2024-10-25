@@ -1,9 +1,9 @@
 
-import axios, { AxiosResponse } from 'axios';
+import axios, { type AxiosResponse } from 'axios';
 
-import { allLocksSessions } from "../LoginLock";
-import { DataLockCode, Group } from '../../helpers/types';
 import { ApiError, BadResquestError } from '../../helpers/apiErrors';
+import type { DataLockCode, Group } from '../../helpers/types';
+import { allLocksSessions } from "../LoginLock";
 
 
 //----------------------------------------------------------------
@@ -11,7 +11,7 @@ import { ApiError, BadResquestError } from '../../helpers/apiErrors';
 export async function createGroupLocks(data: Group) {
     const allGroupCodesLocks: Array<DataLockCode> = [];
 
-    if(data.locks.length == 0) {
+    if(data.locks.length === 0) {
       throw new BadResquestError("Unit is empty")
     }
 

@@ -1,0 +1,65 @@
+
+import { useContext, useState } from 'react'
+import noUserIcon from '../assets/icons/user.png'
+
+import { Link } from 'react-router-dom'
+import { AuthContext } from '../Contexts/Auth/AuthContext'
+
+
+type Prop = {
+  children?: JSX.Element,
+}
+
+
+export const Home = ({ children }: Prop) => {
+
+  const auth = useContext(AuthContext)
+
+  const [dropDownMenuUser, setDropDownMenuUser] = useState(false)
+
+  const handleClickDropDownMenuUser = () => {
+    dropDownMenuUser ? setDropDownMenuUser(false) : setDropDownMenuUser(true)
+  }
+
+
+  return(
+    <div>
+      <nav className='flex justify-around items-center bg-slate-500 p-4'>
+        <span>
+          <img src={noUserIcon} width={46} alt="" />
+        </span>
+        <ul className='flex gap-8'>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/devices">Devices</Link>
+          </li>
+          <li>
+            <Link to="/user">Users</Link>
+          </li>
+          <li>
+            <Link to="/department">Department</Link>
+          </li>
+          <li>
+            <Link to="/Config">Config</Link>
+          </li>
+        </ul>
+        <span className='relative' onClick={handleClickDropDownMenuUser} onKeyUp={handleClickDropDownMenuUser}>
+            <img src={noUserIcon} width={46} alt="No user icon" />
+
+            {dropDownMenuUser && 
+              <span onClick={() => {auth.logout()}} onKeyUp={() => {auth.logout()}} className='absolute botton-0 -translate-x-50 -translate-y-50 p-2 bg-red-400 rounded-md z-10'> Logout </span>
+            }
+        </span>
+      </nav>
+
+      {children ?? 
+        <div>
+          <h1>Home Page</h1>
+          <p>Welcome to the home page!</p>
+        </div>
+      }
+    </div>
+  )
+}

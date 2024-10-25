@@ -24,7 +24,7 @@
 	},
 	"linter": {
 		"enabled": true,
-		"ignore": ["*.json", "*node_modules**/*"],
+		"ignore": ["*.json", "*node_modules"],
 		"rules": {
 			"recommended": true,
 			"suspicious": {

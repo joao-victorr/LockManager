@@ -1,7 +1,8 @@
 // import fetch from 'fetch';
 import axios, { AxiosResponse } from 'axios';
 import { prismaClient } from "../databases/PrismaClient";
-import type { LocksSession, Locks } from '../helpers/types';
+import { ApiError } from '../helpers/apiErrors';
+import type { Locks, LocksSession } from '../helpers/types';
 
 
 const allLocksSessions: Array<LocksSession> = [];
@@ -26,6 +27,9 @@ export const loginLock = async() => {
                     }
                 }
             )
+            // .catch((err) => {
+            //     throw new ApiError(`Error ao logar na unidade ${e.name}`, err.code);
+            // });
             const data = res.data;   
             const newUnits = {id: e.id, ip: e.ip, session: data.session}
             const existingUnitIndex = allLocksSessions.findIndex(unit => unit.id === newUnits.id);

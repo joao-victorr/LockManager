@@ -1,12 +1,12 @@
 
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 
-import { prismaClient } from '../databases/PrismaClient';
 import { createUserLock } from '../LockController/Users/CreateUserLocks';
+import { type Prisma, prismaClient } from '../databases/PrismaClient';
 // import  { deletAccessLock } from '../LockController/Users/DeleteUsersLocks';
 
-import { Users } from '../helpers/types';
 import { BadResquestError } from '../helpers/apiErrors';
+import type { Users } from '../helpers/types';
 
 export class UsersController {
 
@@ -24,7 +24,7 @@ export class UsersController {
     };
 
 
-    const newUser = await prismaClient.$transaction(async (tx: any) => {
+    const newUser = await prismaClient.$transaction(async (tx: Prisma.TransactionClient) => {
       const user = await tx.users.create({ 
         data: {
           name: User.name,

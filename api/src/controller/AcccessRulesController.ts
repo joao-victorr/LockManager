@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
-import { prismaClient } from '../databases/PrismaClient';
-import { AccessRules, DataLockCode } from '../helpers/types';
-import { BadResquestError } from '../helpers/apiErrors';
+import type { Request, Response } from 'express';
 import { createAccessRulesLocks } from '../LockController/AccessRules/CreateAccessRules';
+import { prismaClient } from '../databases/PrismaClient';
+import { BadResquestError } from '../helpers/apiErrors';
+import type { AccessRules, DataLockCode } from '../helpers/types';
 
 export class AcccessRulesController {
 

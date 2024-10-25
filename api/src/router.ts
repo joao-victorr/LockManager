@@ -4,20 +4,20 @@ import multer from 'multer';
 
 import { privateRouter } from './middleware/PassportMiddleware'
 
-import { UserWebController } from './controller/UserWebController';
-import { UsersController } from './controller/UsersController';
-import { LocksController } from './controller/LocksController';
-import { LoginController } from './controller/LoginController';
+import { AcccessRulesController } from './controller/AcccessRulesController';
+import { AuthController } from './controller/AuthController';
 import { GroupsController } from './controller/GroupsController';
+import { LocksController } from './controller/LocksController';
 import { TimesController } from './controller/TimesController';
- import { AcccessRulesController } from './controller/AcccessRulesController';
+ import { UserWebController } from './controller/UserWebController';
+import { UsersController } from './controller/UsersController';
 import { UsersGroupsController } from './controller/UsersGroupsController';
 
 const router = Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-const loginController = new LoginController;
+const authController = new AuthController;
 const userWebController = new UserWebController;
 const usersController = new UsersController;
 const locksController = new LocksController;
@@ -26,8 +26,8 @@ const timesController = new TimesController;
 const accessRulesController = new AcccessRulesController;
 const usersGroupsController = new UsersGroupsController;
 
-router.post('/login', loginController.login)
-router.get('/token', privateRouter, loginController.token)
+router.post('/login', authController.login)
+router.get('/token', authController.token)
 
 router.post('/user_web', userWebController.create);
 router.get('/user_web', privateRouter, userWebController.read);
@@ -38,9 +38,9 @@ router.post('/users', privateRouter, upload.single("image"), usersController.cre
 router.get('/users', privateRouter, usersController.read);
 router.delete('/users', privateRouter, usersController.delete);
 
-router.post('/locks', privateRouter, locksController.create);
-router.get('/locks', privateRouter, locksController.read);
-router.delete('/locks', privateRouter, locksController.delete);
+router.post('/device', privateRouter, locksController.create);
+router.get('/device', privateRouter, locksController.read);
+router.delete('/device', privateRouter, locksController.delete);
 
 router.post('/group', privateRouter, groupController.create);
 router.get('/group', privateRouter, groupController.read);

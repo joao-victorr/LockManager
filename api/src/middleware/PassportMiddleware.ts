@@ -1,11 +1,12 @@
-import passport from 'passport';
 import dotenv from 'dotenv';
-import { Strategy as JWTStrategy, ExtractJwt } from 'passport-jwt';
-import type { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import passport from 'passport';
+import { ExtractJwt, Strategy as JWTStrategy } from 'passport-jwt';
 
 import { prismaClient } from '../databases/PrismaClient';
 import { UnauthorazedError } from '../helpers/apiErrors';
+import type { UserWeb } from '../helpers/types';
 
 dotenv.config();
 
@@ -15,7 +16,7 @@ const options = {
 }
 
 passport.use(new JWTStrategy(options, async (payload, done) => {
-    const user = await prismaClient.usersWeb.findUnique({where: {id: payload.id}})
+    const user = await prismaClient.usersWeb.findUnique({where: {id: payload.user.id}})
     return user ? done(null, user) : done(new UnauthorazedError("Unauthorazed user"), false);
 }))
 
@@ -28,8 +29,17 @@ export const privateRouter = (req: Request, res: Response, next: NextFunction) =
     })(req, res, next);
 };
 
-export const generateToken = (data: string) => {
-    return jwt.sign({id: data}, process.env.JWT_SECRET as string, { expiresIn: '1d' })
+export const generateToken = (data: UserWeb) => {
+    return jwt.sign({user: data}, process.env.JWT_SECRET as string, { expiresIn: '5m' })
+}
+
+export const verifyToken = (token: string) => {
+    try {
+        const user = jwt.verify(token, process.env.JWT_SECRET as string) as {user: UserWeb, "iat": number, exp: number}
+        return user.user;
+    } catch (error) {
+        throw new UnauthorazedError("Invalid token!");    
+    }
 }
 
 

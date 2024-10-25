@@ -1,8 +1,9 @@
-import { Request, Response } from 'express';
-import { prismaClient } from '../databases/PrismaClient';
-import { Times } from '../helpers/types';
-import { BadResquestError } from '../helpers/apiErrors';
+
+import type { Request, Response } from 'express';
 import { createTimesLocks } from '../LockController/Times/CreateTimesLocks';
+import { type Prisma, prismaClient } from '../databases/PrismaClient';
+import { BadResquestError } from '../helpers/apiErrors';
+import type { Times } from '../helpers/types';
 
 export class TimesController {
 
@@ -18,7 +19,7 @@ export class TimesController {
       timesSpans: req.body.timesSpans
     }
 
-    const newTimes = await prismaClient.$transaction(async(tx: any) => {
+    const newTimes = await prismaClient.$transaction(async(tx: Prisma.TransactionClient) => {
       const timesZones = await tx.timeZones.create({
         data: {
           name: times.name

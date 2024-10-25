@@ -1,14 +1,14 @@
-import { Request, Response } from 'express';
-import { prismaClient } from '../databases/PrismaClient';
 import bcrypt from 'bcrypt';
+import type { Request, Response } from 'express';
+import { prismaClient } from '../databases/PrismaClient';
 
-import { generateToken } from '../middleware/PassportMiddleware';
 import { loginLock } from '../LockController/LoginLock';
+import { generateToken, verifyToken } from '../middleware/PassportMiddleware';
 
 import { BadResquestError, UnauthorazedError } from '../helpers/apiErrors';
 
 
-export class LoginController {
+export class AuthController {
   async login(req: Request, res: Response) {
     if(!req.body.email && !req.body.password) {
       throw new BadResquestError("Data Not Found")
@@ -33,13 +33,21 @@ export class LoginController {
 
     const { password: _, ...user } = data
 
-    await loginLock();
-    const token = generateToken(user.id);
+    // await loginLock();
+    const token = generateToken(user);
     return res.status(200).json({user, token: token});
   };
 
   async token(req: Request, res: Response) {    
-    const user = req.user
+    const userToken = req.query.token as string
+
+    console.log(userToken)
+
+    if(!userToken) {
+      throw new BadResquestError("Token not found")
+    }
+
+    const user = verifyToken(userToken)
     
     return res.json({ user })
   }

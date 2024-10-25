@@ -1,9 +1,9 @@
+import bcrypt from 'bcrypt';
 import type { Request, Response, } from 'express';
 import { prismaClient } from '../databases/PrismaClient';
-import bcrypt from 'bcrypt';
 
-import type { UserWeb } from '../helpers/types';
 import { BadResquestError } from '../helpers/apiErrors';
+import type { UserWeb } from '../helpers/types';
 import { generateToken } from '../middleware/PassportMiddleware';
 
 
@@ -42,7 +42,7 @@ export class UserWebController {
       }
     });
 
-    const token = generateToken(newUser.id);
+    const token = generateToken(newUser);
 
     return res.status(201).json({ newUser, token });
 

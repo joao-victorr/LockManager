@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
+import { createUserGroupLocks } from '../LockController/UsersGroups/CreateUserGroupsLocks';
 import { prismaClient } from '../databases/PrismaClient';
 import { ApiError, BadResquestError } from '../helpers/apiErrors';
-import { createUserGroupLocks } from '../LockController/UsersGroups/CreateUserGroupsLocks';
-import { DataUserGroup, UserGroup } from '../helpers/types';
+import type { DataUserGroup, UserGroup } from '../helpers/types';
 
 
 type GroupsLock = {

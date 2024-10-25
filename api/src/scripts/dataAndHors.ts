@@ -1,7 +1,7 @@
+import * as fs from 'node:fs';
+import * as path from 'path';
 import axios from "axios";
 import { allLocksSessions, loginLock } from "../LockController/LoginLock";
-import * as fs from 'fs';
-import * as path from 'path';
 
 
 

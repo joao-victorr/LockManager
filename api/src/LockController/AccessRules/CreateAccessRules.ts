@@ -1,15 +1,15 @@
 
-import axios, { AxiosResponse } from 'axios';
+import axios, { type AxiosResponse } from 'axios';
 
-import { allLocksSessions } from "../LoginLock";
-import { AccessRules, DataLockCode } from '../../helpers/types';
 import { ApiError, BadResquestError } from '../../helpers/apiErrors';
+import type { AccessRules, DataLockCode } from '../../helpers/types';
+import { allLocksSessions } from "../LoginLock";
 
 //Function to create locks for access rules
 export async function createAccessRulesLocks(data: Array<AccessRules>) {
   const allGroupCodesLocks : Array<DataLockCode> = [];
 
-  if(data.length == 0) {
+  if(data.length === 0) {
     throw new BadResquestError("Unit is empty")
   }
 

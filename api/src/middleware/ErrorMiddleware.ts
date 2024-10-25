@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import { ApiError } from "../helpers/apiErrors";
 import { AxiosError } from "axios";
+import type { NextFunction, Request, Response } from "express";
+import type { ApiError } from "../helpers/apiErrors";
 
 
 export const ErrorMiddleware = (

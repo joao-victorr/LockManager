@@ -1,20 +1,33 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { prismaClient } from '../databases/PrismaClient';
-import { ApiError, BadResquestError } from '../helpers/apiErrors';
+import { BadResquestError } from '../helpers/apiErrors';
 
 
 export class LocksController {
 
   async create(req: Request, res: Response) {
 
-    if(!req.body.name || !req.body.ip || !req.body.user || !req.body.password) {
+    if(!req.body.name || !req.body.ip || !req.body.user || !req.body.password || req.body.status == null) {
       throw new BadResquestError("Data not found")
     }
     const lock = {
         name: req.body.name.toUpperCase() as string,
         ip: req.body.ip as string,
         user: req.body.user as string,
-        password: req.body.password as string
+        password: req.body.password as string,
+        status: req.body.status as boolean
+    }
+
+    const verifyIp = await prismaClient.locks.findUnique({
+      where: { ip: lock.ip },
+      select: {
+        id: true,
+        ip: true
+      }
+    })
+
+    if(verifyIp) {
+      throw new BadResquestError("Lock with this IP already exists")
     }
 
     const newLock = await prismaClient.locks.create({
@@ -22,11 +35,12 @@ export class LocksController {
             name: lock.name,
             ip: lock.ip,
             users: lock.user,
-            password: lock.password
+            password: lock.password,
+            status: lock.status
         }
     })
 
-    return res.status(201).json({successe: newLock})
+    return res.status(201).json({ newLock })
   };
 
   async read(req: Request, res: Response) {
@@ -39,6 +53,9 @@ export class LocksController {
           id: true,
           name: true,
           ip: true,
+          users: true,
+          password: true,
+          status: true,
           GroupsLocks: {
             select: {
               id: true,
@@ -55,7 +72,7 @@ export class LocksController {
           }
         }
       })
-      return res.status(200).json({Lock: dataLock})
+      return res.status(200).json({lock: dataLock})
     }
 
     const dataLock = await prismaClient.locks.findMany({
@@ -63,6 +80,9 @@ export class LocksController {
         id: true,
         name: true,
         ip: true,
+        users: true,
+        password: true,
+        status: true,
         GroupsLocks: {
           select: {
             id: true,
@@ -80,7 +100,7 @@ export class LocksController {
       }
     })
 
-    return res.status(200).json({Locks: dataLock})
+    return res.status(200).json({devices: dataLock})
     
   };
 
