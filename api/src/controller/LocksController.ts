@@ -11,11 +11,11 @@ export class LocksController {
       throw new BadResquestError("Data not found")
     }
     const lock = {
-        name: req.body.name.toUpperCase() as string,
-        ip: req.body.ip as string,
-        user: req.body.user as string,
-        password: req.body.password as string,
-        status: req.body.status as boolean
+        name: req.body.name.toUpperCase(),
+        ip: req.body.ip,
+        user: req.body.user,
+        password: req.body.password,
+        status: req.body.status
     }
 
     const verifyIp = await prismaClient.locks.findUnique({

@@ -23,7 +23,7 @@ export const Home = ({ children }: Prop) => {
 
 
   return(
-    <div>
+    <div className="flex flex-col h-screen">
       <nav className='flex justify-around items-center bg-slate-500 p-4'>
         <span>
           <img src={noUserIcon} width={46} alt="" />
@@ -55,7 +55,7 @@ export const Home = ({ children }: Prop) => {
       </nav>
 
       {children ?? 
-        <div>
+        <div className=''>
           <h1>Home Page</h1>
           <p>Welcome to the home page!</p>
         </div>

@@ -50,13 +50,14 @@ export type LocksSession = {
   session: string
 };
 
-export type Locks = Array<{
-  id: string
-  name: string,
-  ip: string,
-  users: string,
-  password: string
-}>;
+export type Locks = {
+  id: string;
+  name: string;
+  ip: string;
+  status: boolean;
+  users: string;
+  password: string;
+};
 
 export type Group = {
   name: string,

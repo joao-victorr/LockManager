@@ -1,47 +1,59 @@
 // import fetch from 'fetch';
-import axios, { AxiosResponse } from 'axios';
+import axios, { type AxiosResponse } from 'axios';
 import { prismaClient } from "../databases/PrismaClient";
 import { ApiError } from '../helpers/apiErrors';
 import type { Locks, LocksSession } from '../helpers/types';
 
 
 const allLocksSessions: Array<LocksSession> = [];
-
-export const loginLock = async() => {
-    const units: Locks = await prismaClient.locks.findMany();
+export const loginLock = async () => {
+    const devices: Array<Locks> = await prismaClient.locks.findMany({
+        where: {
+            status: true
+        }
+    });
+    console.log(devices);
 
     await Promise.all(
-        units.map(async(e) => {
-        
-            const url =`http://${e.ip}/login.fcgi`        
-            
-            const res = await axios.post(
-                url,
-                {
-                    login: e.users,
-                    password: e.password
-                },
-                {
-                    headers: {
-                        "Content-Type": "application/json"
+        devices.map(async (device) => {
+            try {
+                const url = `http://${device.ip}/login.fcgi`;
+
+                const res: AxiosResponse = await axios.post(
+                    url,
+                    {
+                        login: device.users,
+                        password: device.password
+                    },
+                    {
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
                     }
+                );
+
+                const data = res.data;
+                const newDevices = { id: device.id, ip: device.ip, session: data.session };
+                const existingUnitIndex = allLocksSessions.findIndex(unit => unit.id === newDevices.id);
+
+                if (existingUnitIndex === -1) {
+                    console.log(`Logged in to device ${device.id} (${device.ip}) with session: ${data.session}`);
+                    allLocksSessions.push(newDevices);
+                } else {
+                    allLocksSessions[existingUnitIndex].session = newDevices.session;
                 }
-            )
-            // .catch((err) => {
-            //     throw new ApiError(`Error ao logar na unidade ${e.name}`, err.code);
-            // });
-            const data = res.data;   
-            const newUnits = {id: e.id, ip: e.ip, session: data.session}
-            const existingUnitIndex = allLocksSessions.findIndex(unit => unit.id === newUnits.id);
-    
-            if (existingUnitIndex === -1) {
-                allLocksSessions.push(newUnits);
-            } else {
-                allLocksSessions[existingUnitIndex].session = newUnits.session;
+            } catch (error) {
+                console.error(`Failed to login to device ${device.id} (${device.ip})`);
+
+                // Atualiza o status do dispositivo para `false` no banco de dados
+                await prismaClient.locks.update({
+                    where: { id: device.id },
+                    data: { status: false }
+                });
             }
         })
-    )
-}
+    );
+};
 
 
 export { allLocksSessions }

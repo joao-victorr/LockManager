@@ -16,7 +16,6 @@ export const App = () => {
   const auth = useContext(AuthContext)
 
 
-
   return (
     <Routes>
       <Route path="/login" element={<Login />} />

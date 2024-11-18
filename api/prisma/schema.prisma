@@ -25,7 +25,7 @@ model Locks {
   ip             String           @unique
   users          String
   password       String
-  status         Boolean
+  status         Boolean          @default(true)
   UsersLocks     UsersLocks[]
   GroupsLocks    GroupsLocks[]
   TimeZonesLocks TimeZonesLocks[]

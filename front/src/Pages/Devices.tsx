@@ -27,6 +27,10 @@ export const Devices = () => {
       password: devicePassword,
       status: deviceStatus
     }
+    if (!data.name || !data.ip || !data.user || !data.password || !data.status ) {
+      alert("Por favor, preencha todos os campos");
+      return;
+    }
     const res = await deviceApi.postDevice(data);
 
     if (res) {
@@ -39,7 +43,6 @@ export const Devices = () => {
       getAllDevice();      
     }
 
-    // Make API call to add new device
   }
 
 
