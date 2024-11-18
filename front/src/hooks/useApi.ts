@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { AuthApi } from './AuthApi/AuthApi';
 import { DeviceApi } from './DeviceApi/DivecesApi';
+import { DevicesGroupsApi } from './GroupsAPi/DevicesGroupsApi';
 
 
 export const api = axios.create({
@@ -16,5 +17,9 @@ export class UseApi {
 
   // Opçoes de requisições para a rota de Dispositivos (Locks)
   devicesApi = DeviceApi
+
+
+  // Opções de requisições para a rota de Grupos por Dispositivos
+  devicesGroupsApi = DevicesGroupsApi
 
 }

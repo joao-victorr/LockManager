@@ -31,10 +31,11 @@ export class AuthController {
       throw new UnauthorazedError("Email or password not found")  
     }
 
-    const { password: _, ...user } = data
+    const { password:  _, ...user } = data
 
     await loginLock();
     const token = generateToken(user);
+    console.log(token, user);
     return res.status(200).json({user, token: token});
   };
 

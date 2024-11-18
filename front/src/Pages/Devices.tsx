@@ -4,9 +4,12 @@ import type { Device } from "../Types/Device";
 import { UseApi } from "../hooks/useApi";
 
 
-export const Devices = () => {
 
-  const deviceApi = new UseApi().devicesApi;
+
+const deviceApi = new UseApi().devicesApi;
+
+export const Devices = () => {
+ 
 
   const [deviceName, setDeviceName] = useState("");
   const [ipAddress, setIpAddress] = useState("");
@@ -46,6 +49,7 @@ export const Devices = () => {
   }
 
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const getAllDevice = useCallback(async () => {
     const data = await deviceApi.getDevices();
     setAllDevices(data);
