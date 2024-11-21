@@ -1,9 +1,9 @@
 
 import type { Request, Response } from 'express';
 
-import { createUserLock } from '../LockController/Users/CreateUserLocks';
+import { createUserDevice } from '../DevicesController/Users/CreateUserDevices';
 import { type Prisma, prismaClient } from '../databases/PrismaClient';
-// import  { deletAccessLock } from '../LockController/Users/DeleteUsersLocks';
+// import  { deletAccessDevice } from '../DeviceController/Users/DeleteUsersDevices';
 
 import { BadResquestError } from '../helpers/apiErrors';
 import type { Users } from '../helpers/types';
@@ -20,9 +20,8 @@ export class UsersController {
     const User: Users = {
         name: bodyJson.name.toUpperCase(),
         image: req.file.buffer,
-        locks: bodyJson.locks
+        devices: bodyJson.devices
     };
-
 
     const newUser = await prismaClient.$transaction(async (tx: Prisma.TransactionClient) => {
       const user = await tx.users.create({ 
@@ -32,24 +31,25 @@ export class UsersController {
         }
       });
 
-      const codeAllAccessLock = await createUserLock(User);
+      const codeAllAccessDevice = await createUserDevice(User);
 
-      const userLocks = await Promise.all(
-        codeAllAccessLock.map(async (e) => {
-          const newUsersLock = await tx.usersLocks.create({
+      const userDevices = await Promise.all(
+        codeAllAccessDevice.map(async (e) => {
+          const newUsersDevice = await tx.usersDevices.create({
             data: {
               code: e.code,
               id_users: user.id,
-              id_locks: e.id,
+              id_devices: e.id,
             }
           });
-          return newUsersLock;
+          return newUsersDevice;
         })
       );
-      return {user, userLocks}
+      return {user, userDevices}
     });
-
-    res.status(201).json({ data: newUser });
+    
+    res.status(201).json({ newUser });
+    
   }
 
   async read(req: Request, res: Response) {
@@ -66,9 +66,9 @@ export class UsersController {
         select: {
           id: true,
           name: true,
-          UsersLocks: {
+          UsersDevices: {
             select: {
-              id_locks: true,
+              id_devices: true,
               code: true,
             },
           },
@@ -88,9 +88,9 @@ export class UsersController {
         select: {
           id: true,
           name: true,
-          UsersLocks: {
+          UsersDevices: {
             select: {
-              id_locks: true,
+              id_devices: true,
               code: true,
             },
           },
@@ -104,9 +104,9 @@ export class UsersController {
         id: true,
         name: true,
         image: true,
-        UsersLocks: {
+        UsersDevices: {
           select: {
-            id_locks: true
+            id_devices: true
           },
         },
         UsersGroups: {
@@ -137,9 +137,9 @@ export class UsersController {
     //   where: {id: user.id},
     //   select: {
     //     id: true,
-    //     userLock: {
+    //     userDevice: {
     //       where: {
-    //         id_lock: user.unidade[0].id
+    //         id_device: user.unidade[0].id
     //       }
     //     }
     //   }
@@ -147,7 +147,7 @@ export class UsersController {
 
     // res.json({datauser})
 
-    // deletuserLock(datauser);
+    // deletuserDevice(datauser);
 
     // if (datauser.id) {
     //   const delet = await prismaClient.user.delete({where: {id: dataAccess.id}});

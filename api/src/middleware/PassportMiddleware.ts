@@ -10,6 +10,8 @@ import type { UserWeb } from '../helpers/types';
 
 dotenv.config();
 
+const expireTime = "30m"
+
 const options = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.JWT_SECRET as string
@@ -30,7 +32,7 @@ export const privateRouter = (req: Request, res: Response, next: NextFunction) =
 };
 
 export const generateToken = (data: UserWeb) => {
-    return jwt.sign({user: data}, process.env.JWT_SECRET as string, { expiresIn: '5m' })
+    return jwt.sign({user: data}, process.env.JWT_SECRET as string, { expiresIn: expireTime })
 }
 
 export const verifyToken = (token: string) => {

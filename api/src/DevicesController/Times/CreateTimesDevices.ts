@@ -1,21 +1,21 @@
 import axios, { type AxiosResponse } from 'axios';
 
-import { allLocksSessions } from "../LoginLock";
-import type { DataTimesLockCode, Times } from '../../helpers/types';
 import { ApiError, BadResquestError } from '../../helpers/apiErrors';
+import type { DataTimesDeviceCode, Times } from '../../helpers/types';
+import { allDevicesSessions } from "../LoginDevice";
 
-//Function to create locks for Times_Zones and Times_Spans
-export async function createTimesLocks(data: Times) {
-  const allTimesCodesLocks : Array<DataTimesLockCode> = [];
+//Function to create Devices for Times_Zones and Times_Spans
+export async function createTimesDevices(data: Times) {
+  const allTimesCodesDevices : Array<DataTimesDeviceCode> = [];
 
-  if(data.locks.length === 0) {
+  if(data.devices.length === 0) {
     throw new BadResquestError("Unit is empty")
   }
 
   //Definition of Times_Zones and Times_Spans data for registered
-  const times = data.locks.map(e => {
-    //Association of the lock ID with the corresponding session
-    const unitData = allLocksSessions.find(unit => unit.id === e.id);
+  const times = data.devices.map(e => {
+    //Association of the Device ID with the corresponding session
+    const unitData = allDevicesSessions.find(unit => unit.id === e.id);
     if(!unitData) {
         throw new ApiError("Error ao relacionar unidades enviadas com unidades existentes.", 500)
     };
@@ -31,7 +31,7 @@ export async function createTimesLocks(data: Times) {
     return time;
   })
 
-  //Usser_Group registration in each lock
+  //Usser_Group registration in each Device
   for(const time of times) {
     const url = `http://${time.ip}/create_objects.fcgi?session=${time.session}`;
 
@@ -79,8 +79,8 @@ export async function createTimesLocks(data: Times) {
     )
     const dataSpans = newSpans.data;
     const dataUnitCode = {id: time.id, codeZones: dataZones.ids[0], codeSpans: dataSpans.ids[0]}
-    allTimesCodesLocks.push(dataUnitCode);
+    allTimesCodesDevices.push(dataUnitCode);
   }
 
-  return allTimesCodesLocks;
+  return allTimesCodesDevices;
 }

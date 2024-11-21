@@ -9,48 +9,48 @@ export type UserWeb = {
 export type Users = {
   name: string;
   image: Buffer;
-  locks: Array<{
-    id: string;
+  devices: Array<{
+    id_device: string;
   }>;
 };
 
 export type DeletData = {
   id: string;
-  locks: Array<{
-    id: string;
+  devices: Array<{
+    id_device: string;
   }>
 }
 export type DeletGroup = {
   id: string;
-  GroupsLock: Array<{
-    id_locks: string;
+  GroupsDevice: Array<{
+    id_device: string;
   }>
 }
 
-export type LockData = {
+export type DeviceData = {
   name: string,
   ip: string,
   session: string
 }
 
-export type DataLockCode = {
+export type DataDeviceCode = {
   id: string;
   code: number;
 }
 
-export type DataTimesLockCode = {
+export type DataTimesDeviceCode = {
   id: string;
   codeZones: number;
   codeSpans: number;
 }
 
-export type LocksSession = {
+export type DevicesSession = {
   id: string,
   ip: string,
   session: string
 };
 
-export type Locks = {
+export type Devices = {
   id: string;
   name: string;
   ip: string;
@@ -61,7 +61,7 @@ export type Locks = {
 
 export type Group = {
   name: string,
-  locks: Array<{
+  devices: Array<{
     id: string
   }>
 }
@@ -69,7 +69,7 @@ export type Group = {
 
 export type Times = {
   name: string,
-  locks: Array<{
+  devices: Array<{
     id: string
   }>
   timesSpans: {
@@ -90,14 +90,14 @@ export type Times = {
 
 export type AccessRules = {
   id: string
-  GroupsLocks: Array<{code: number}>,
-  TimeZonesLocks: Array<{code: number}>
+  GroupsDevices: Array<{code: number}>,
+  TimeZonesDevices: Array<{code: number}>
 }
 
 export type DataUserGroup = {
   id_user: string
-  locks: Array<{
-    id_lock: string
+  devices: Array<{
+    id_device: string
     gruops: Array<{
       id: string
     }>
@@ -105,9 +105,9 @@ export type DataUserGroup = {
 }
 
 export type UserGroup = {
-  codeUserLock: number,
-  lock: {
-    id_lock: string;
+  codeUserDevice: number,
+  device: {
+    id_device: string;
     codeGruops: Array<{
       code: number;
       id_groups: string

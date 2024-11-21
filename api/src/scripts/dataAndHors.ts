@@ -1,7 +1,7 @@
 import * as fs from 'node:fs';
 import * as path from 'path';
 import axios from "axios";
-import { allLocksSessions, loginLock } from "../LockController/LoginLock";
+import { allDevicesSessions, loginDevice } from "../DevicesController/LoginDevice";
 
 
 
@@ -22,8 +22,8 @@ const logMessage = (name: string, message: string) => {
 
 
 export const updateDateTime = async () => {
-  await loginLock()
-  console.log(allLocksSessions)
+  await loginDevice()
+  console.log(allDevicesSessions)
 
   const dateTime = {
     day: new Date().getDate(),
@@ -35,7 +35,7 @@ export const updateDateTime = async () => {
   }
   console.log(dateTime);
 
-  for (const session of allLocksSessions) {
+  for (const session of allDevicesSessions) {
     const url = `http://${session.ip}/set_system_time.fcgi?session=${session.session}`
     console.log(url)
 

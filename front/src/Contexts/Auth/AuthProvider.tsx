@@ -2,14 +2,14 @@
 import { useEffect, useState } from "react"
 import { AuthContext } from "./AuthContext"
 
-import type { User } from "../../Types/User"
+import type { UserWeb } from "../../Types/Auth"
 import { UseApi } from "../../hooks/useApi"
 
 const authApi = new UseApi().authApi
 
 
 export const AuthProvider = ({children}: {children: JSX.Element}) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserWeb | null>(null);
 
   useEffect(() => {
         
@@ -42,6 +42,7 @@ export const AuthProvider = ({children}: {children: JSX.Element}) => {
 
   const logout = async () => {
     await authApi.logout()
+    localStorage.removeItem('token')
     setUser(null)
     return
   }

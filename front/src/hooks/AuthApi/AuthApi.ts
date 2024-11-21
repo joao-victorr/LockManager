@@ -1,5 +1,5 @@
 
-import type { LoginData, LoginRes, User } from '../../Types/User';
+import type { LoginData, LoginRes, UserWeb } from '../../Types/Auth';
 import { api } from '../useApi';
 
 
@@ -11,7 +11,7 @@ export const AuthApi = {
       params: { token }
     })
 
-    return res.data as User;    
+    return res.data as UserWeb;    
   },
 
   login: async (data: LoginData): Promise<LoginRes> => {

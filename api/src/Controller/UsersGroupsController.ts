@@ -1,13 +1,13 @@
 import type { Request, Response } from 'express';
-import { createUserGroupLocks } from '../LockController/UsersGroups/CreateUserGroupsLocks';
+import { createUserGroupDevices } from '../DevicesController/UsersGroups/CreateUserGroupsDevices';
 import { prismaClient } from '../databases/PrismaClient';
 import { ApiError, BadResquestError } from '../helpers/apiErrors';
 import type { DataUserGroup, UserGroup } from '../helpers/types';
 
 
-type GroupsLock = {
-  id_lock: string,
-  gruops: Array<{
+type GroupsDevice = {
+  id_device: string,
+  groups: Array<{
     id: string
   }>
 }
@@ -17,38 +17,41 @@ export class UsersGroupsController {
   async create(req: Request, res: Response) {
 
     const data: DataUserGroup = req.body;
+    console.log(data)
 
-    if(!data.id_user || !data.locks || data.locks.length === 0) {
+
+    if(!data.id_user || !data.devices || data.devices.length === 0) {
       throw new BadResquestError("Data is required")
     }
+    
 
-    const userEndGruopsLocks: Array<UserGroup> = await Promise.all(data.locks.map( async (lock: GroupsLock) => {
-      if( !lock.id_lock || !lock.gruops || lock.gruops.length === 0 ) {
-        throw new BadResquestError("id_group and id_locks is required");
+    const userEndGruopsDevices: Array<UserGroup> = await Promise.all(data.devices.map( async (device: GroupsDevice) => {
+      if( !device.id_device || !device.gruops || device.gruops.length === 0 ) {
+        throw new BadResquestError("id_group and id_devices is required");
       }
 
-      const userLock = await prismaClient.locks.findUnique({
+      const userDevice = await prismaClient.devices.findUnique({
         where: {
-          id: lock.id_lock
+          id: device.id_device
         },
         select: {
-          UsersLocks: {
+          UsersDevices: {
             where: {id_users: {equals: data.id_user}},
             select: {code: true}
           }
         }
       })
-      if(!userLock) {
-        throw new BadResquestError("id_user not found in id_lock");
+      if(!userDevice) {
+        throw new BadResquestError("id_user not found in id_device");
       }
 
-      const gruopsLock = await Promise.all(lock.gruops.map( async (gruop) => {
-        const gruopsLock = await prismaClient.locks.findUnique({
+      const gruopsDevice = await Promise.all(device.gruops.map( async (gruop) => {
+        const gruopsDevice = await prismaClient.devices.findUnique({
           where: {
-            id: lock.id_lock
+            id: device.id_device
           },
           select: {
-            GroupsLocks: {
+            GroupsDevices: {
               where: {id_groups: {equals: gruop.id}},
               select: {
                 code: true,
@@ -58,18 +61,18 @@ export class UsersGroupsController {
           }
         })
 
-        if(!gruopsLock) {
-          throw new BadResquestError("id_group not found in id_lock");
+        if(!gruopsDevice) {
+          throw new BadResquestError("id_group not found in id_device");
         }
 
-        return gruopsLock.GroupsLocks[0];
+        return gruopsDevice.GroupsDevices[0];
       }));
 
       const userEndGruop = {
-        codeUserLock: userLock.UsersLocks[0].code,
-        lock: {
-          id_lock: lock.id_lock,
-          codeGruops: gruopsLock
+        codeUserDevice: userDevice.UsersDevices[0].code,
+        device: {
+          id_device: device.id_device,
+          codeGruops: gruopsDevice
         }
       }
 
@@ -77,21 +80,21 @@ export class UsersGroupsController {
     }))
 
 
-    await createUserGroupLocks(userEndGruopsLocks)
+    await createUserGroupDevices(userEndGruopsDevices)
 
-    const newUserGroup = await Promise.all(userEndGruopsLocks.map(async (userEndGruopsLock) => {
-      return await Promise.all(userEndGruopsLock.lock.codeGruops.map(async (codeGruop) => {
+    const newUserGroup = await Promise.all(userEndGruopsDevices.map(async (userEndGruopsDevice) => {
+      return await Promise.all(userEndGruopsDevice.device.codeGruops.map(async (codeGruop) => {
         return await prismaClient.usersGroups.create({
           data: {
             id_users: data.id_user,
-            id_locks: userEndGruopsLock.lock.id_lock,
+            id_devices: userEndGruopsDevice.device.id_device,
             id_groups: codeGruop.id_groups
           }
         })
       }));
     }));
 
-    res.json(newUserGroup)
+    return res.status(201).json(newUserGroup)
 
   };
 

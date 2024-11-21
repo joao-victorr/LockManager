@@ -63,8 +63,8 @@ export const Devices = () => {
           <td className="border-r border-gray-300 p-2">{device.ip}</td>
           <td className="border-r border-gray-300 p-2">{device.users}</td>
           <td className="border-r border-gray-300 p-2">{device.password}</td>
-          <td className="border-r border-gray-300 p-2">{device.UsersLocks.length}</td>
-          <td className="border-r border-gray-300 p-2">{device.GroupsLocks.length}</td>
+          <td className="border-r border-gray-300 p-2">{device.UsersDevices.length}</td>
+          <td className="border-r border-gray-300 p-2">{device.GroupsDevices.length}</td>
           <td className="border-r border-gray-300">{device.status ? "Ativo" : "Inativo"}</td>
           <td className="p-2"><button type="button">Editar</button></td>
         </tr>

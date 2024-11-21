@@ -1,13 +1,13 @@
 import type { DevicesGroup } from "./DevicesGroups";
 
 
-export interface Device  {
+export type Device = {
   id: string;
   name: string;
   ip: string;
   users: string;
-  UsersLocks: Array<string>;
-  GroupsLocks: Array<DevicesGroup>;
+  UsersDevices: Array<string>;
+  GroupsDevices: Array<DevicesGroup>;
   password: string;
   status: boolean;
 }

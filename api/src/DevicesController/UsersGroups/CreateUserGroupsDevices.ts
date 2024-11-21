@@ -1,37 +1,37 @@
 import axios, { AxiosResponse } from 'axios';
-import { allLocksSessions } from "../LoginLock";
-import type { UserGroup } from '../../helpers/types';
 import { BadResquestError } from '../../helpers/apiErrors';
+import type { UserGroup } from '../../helpers/types';
+import { allDevicesSessions } from "../LoginDevice";
 
 /*----------------------------------------------------------------*/
-//Function to create locks for user_groups
-export async function createUserGroupLocks(data: Array<UserGroup>) {
+//Function to create Devices for user_groups
+export async function createUserGroupDevices(data: Array<UserGroup>) {
     if (data.length === 0) {
         throw new BadResquestError("Unit is empty");
     }
 
     //Definition of user_group data for registered
-    const usersGroups = data.map(userGroupLocks => {
-      //Association of the lock ID with the corresponding session
+    const usersGroups = data.map(userGroupDevices => {
+      //Association of the Device ID with the corresponding session
       
-      const unitData = allLocksSessions.find(unit => unit.id === userGroupLocks.lock.id_lock);
+      const unitData = allDevicesSessions.find(unit => unit.id === userGroupDevices.device.id_device);
       
       if (!unitData) {
-        throw new BadResquestError(`Error in association id: ${userGroupLocks.lock.id_lock} a session`);
+        throw new BadResquestError(`Error in association id: ${userGroupDevices.device.id_device} a session`);
       }
 
       const userGroup = {
-        id: userGroupLocks.lock.id_lock,
+        id: userGroupDevices.device.id_device,
         ip: unitData.ip,
         session: unitData.session,
-        userCode: userGroupLocks.codeUserLock,
-        codeGroups: userGroupLocks.lock.codeGruops
+        userCode: userGroupDevices.codeUserDevice,
+        codeGroups: userGroupDevices.device.codeGruops
       }
 
       return userGroup;
     })
     
-    //User_Group registration in each lock
+    //User_Group registration in each device
     for(const userGroup of usersGroups) {
 
       userGroup.codeGroups.map( async (codeGruop) => {

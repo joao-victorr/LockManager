@@ -2,11 +2,11 @@ import type { Device } from '../../Types/Device';
 import { api } from '../useApi';
 
 
-interface DeviceApiResponse {
+type DeviceApiResponse = {
   devices: Device[];
 }
 
-interface Data {
+type Data = {
   name: string;
   ip: string;
   user: string;
@@ -44,7 +44,6 @@ export const DeviceApi = {
   },
 
   postDevice: async (data: Data) => {
-    console.log(data)
     const token = localStorage.getItem('token');
 
     const res = await api.post('/device', data, {

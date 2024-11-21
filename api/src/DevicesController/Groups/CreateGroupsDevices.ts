@@ -2,23 +2,23 @@
 import axios, { type AxiosResponse } from 'axios';
 
 import { ApiError, BadResquestError } from '../../helpers/apiErrors';
-import type { DataLockCode, Group } from '../../helpers/types';
-import { allLocksSessions } from "../LoginLock";
+import type { DataDeviceCode, Group } from '../../helpers/types';
+import { allDevicesSessions } from "../LoginDevice";
 
 
 //----------------------------------------------------------------
-//Function to create locks for groups
-export async function createGroupLocks(data: Group) {
-    const allGroupCodesLocks: Array<DataLockCode> = [];
+//Function to create Devices for groups
+export async function createGroupDevices(data: Group) {
+    const allGroupCodesDevices: Array<DataDeviceCode> = [];
 
-    if(data.locks.length === 0) {
+    if(data.devices.length === 0) {
       throw new BadResquestError("Unit is empty")
     }
 
     //Definition of group data for registered
-    const groups = data.locks.map(e => {
-        //Association of the lock ID with the corresponding session
-        const unitData = allLocksSessions.find(unit => unit.id === e.id);
+    const groups = data.devices.map(e => {
+        //Association of the Device ID with the corresponding session
+        const unitData = allDevicesSessions.find(unit => unit.id === e.id);
 
         if(!unitData) {
             throw new ApiError("Error ao relacionar unidades enviadas com unidades existentes.", 500)
@@ -34,7 +34,7 @@ export async function createGroupLocks(data: Group) {
         return group;
     })
     
-    //Group registration in each lock
+    //Group registration in each Device
     for(const group of groups) {
         const url = `http://${group.ip}/create_objects.fcgi?session=${group.session}`;
 
@@ -53,8 +53,8 @@ export async function createGroupLocks(data: Group) {
         const dataAccess = newGroup.data;
         //return of registered object data
         const dataUnitCode = {id: group.id, code: dataAccess.ids[0]}
-        allGroupCodesLocks.push(dataUnitCode);
+        allGroupCodesDevices.push(dataUnitCode);
     }
 
-    return allGroupCodesLocks;
+    return allGroupCodesDevices;
 }

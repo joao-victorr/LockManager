@@ -1,7 +1,7 @@
 import type { Device } from "./Device"
 import type { Group } from "./Groups";
 
-export interface DevicesGroup {
+export type DevicesGroup = {
   id: string;
   code: number;
   id_locks: string;

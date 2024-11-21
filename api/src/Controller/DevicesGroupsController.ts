@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import { prismaClient } from '../databases/PrismaClient';
 
-export class LocksGroupsController {
+export class DevicesGroupsController {
 
   async create(req: Request, res: Response) {
 
@@ -10,7 +10,7 @@ export class LocksGroupsController {
   async read(req: Request, res: Response) {
     
 
-    const data = await prismaClient.groupsLocks.findMany({
+    const data = await prismaClient.groupsDevices.findMany({
       include: {
         groups: {
           select: {
@@ -18,7 +18,7 @@ export class LocksGroupsController {
             name: true
           }
         },
-        locks: {
+        devices: {
           select: {
             id: true,
             name: true
@@ -27,7 +27,7 @@ export class LocksGroupsController {
       }
     })
 
-    return res.status(200).json({ groupsLocks: data });
+    return res.status(200).json({ groupsDevices: data });
 
   };
 

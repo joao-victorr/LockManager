@@ -2,6 +2,8 @@ import axios from 'axios';
 import { AuthApi } from './AuthApi/AuthApi';
 import { DeviceApi } from './DeviceApi/DivecesApi';
 import { DevicesGroupsApi } from './GroupsAPi/DevicesGroupsApi';
+import { UserApi } from './User/UserApi';
+import { UserGroupsApi } from './UserGroups/UserGroups';
 
 
 export const api = axios.create({
@@ -10,16 +12,23 @@ export const api = axios.create({
 
 
 
+
+
 export class UseApi {
 
   // Opçãoes de requisições para a rota de login
   authApi = AuthApi;
 
-  // Opçoes de requisições para a rota de Dispositivos (Locks)
-  devicesApi = DeviceApi
+  // Opçoes de requisições para a rota de Dispositivos
+  devicesApi = DeviceApi;
 
+  // Opçoes de requisições para a rota de usuarios
+  userApi = UserApi;
 
   // Opções de requisições para a rota de Grupos por Dispositivos
-  devicesGroupsApi = DevicesGroupsApi
+  devicesGroupsApi = DevicesGroupsApi;
+
+
+  userGroupsApi = UserGroupsApi
 
 }

@@ -3,7 +3,7 @@ import type { DevicesGroup } from '../../Types/DevicesGroups';
 import { api } from '../useApi';
 
 
-interface DevicesGroupRes {
+type DevicesGroupRes = {
   groupsLocks: Array<DevicesGroup>
 }
 

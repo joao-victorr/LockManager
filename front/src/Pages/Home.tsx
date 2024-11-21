@@ -18,6 +18,7 @@ export const Home = ({ children }: Prop) => {
   const [dropDownMenuUser, setDropDownMenuUser] = useState(false)
 
   const handleClickDropDownMenuUser = () => {
+    console.log("Clicou")
     dropDownMenuUser ? setDropDownMenuUser(false) : setDropDownMenuUser(true)
   }
 

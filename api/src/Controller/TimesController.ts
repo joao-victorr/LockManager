@@ -1,6 +1,6 @@
 
 import type { Request, Response } from 'express';
-import { createTimesLocks } from '../LockController/Times/CreateTimesLocks';
+import { createTimesDevices } from '../DevicesController/Times/CreateTimesDevices';
 import { type Prisma, prismaClient } from '../databases/PrismaClient';
 import { BadResquestError } from '../helpers/apiErrors';
 import type { Times } from '../helpers/types';
@@ -15,7 +15,7 @@ export class TimesController {
 
     const times: Times = {
       name: req.body.name,
-      locks: req.body.locks,
+      devices: req.body.devices,
       timesSpans: req.body.timesSpans
     }
 
@@ -44,32 +44,32 @@ export class TimesController {
         }
       });
 
-      const codesTimesLocks = await createTimesLocks(times);
+      const codesTimesDevices = await createTimesDevices(times);
 
-      const timesLocks = await Promise.all(codesTimesLocks.map(async(e) => {
-        const timesZonesLocks = await tx.timeZonesLocks.create({
+      const timesDevices = await Promise.all(codesTimesDevices.map(async(e) => {
+        const timesZonesDevices = await tx.timeZonesDevices.create({
           data: {
             code: e.codeZones,
-            id_locks: e.id,
+            id_devices: e.id,
             id_TimeZones: timesZones.id
           }
         })
 
-        const timesSpansLocks = await tx.timeSpansLocks.create({
+        const timesSpansDevices = await tx.timeSpansDevices.create({
           data: {
             code: e.codeSpans,
-            id_locks: e.id,
+            id_devices: e.id,
             id_TimeSpans: timesSpans.id
           }
         })
         
-        return {timesZonesLocks, timesSpansLocks}
+        return {timesZonesDevices, timesSpansDevices}
       }))
 
-      const timesZonesLocks = timesLocks.map((lock) => lock.timesZonesLocks);
-      const timesSpansLocks = timesLocks.map((lock) => lock.timesSpansLocks);
+      const timesZonesDevices = timesDevices.map((device) => device.timesZonesDevices);
+      const timesSpansDevices = timesDevices.map((device) => device.timesSpansDevices);
 
-      return {timesZones, timesZonesLocks, timesSpans, timesSpansLocks}
+      return {timesZones, timesZonesDevices, timesSpans, timesSpansDevices}
     })
     
     console.log(newTimes)

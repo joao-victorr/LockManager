@@ -1,35 +1,35 @@
 import type { Request, Response } from 'express';
-import { createAccessRulesLocks } from '../LockController/AccessRules/CreateAccessRules';
+import { createAccessRulesDevices } from '../DevicesController/AccessRules/CreateAccessRules';
 import { prismaClient } from '../databases/PrismaClient';
 import { BadResquestError } from '../helpers/apiErrors';
-import type { AccessRules, DataLockCode } from '../helpers/types';
+import type { AccessRules, DataDeviceCode } from '../helpers/types';
 
 export class AcccessRulesController {
 
   async create(req: Request, res: Response) {
 
-    if(!req.body.id_groups || !req.body.id_TimeZones || !req.body.locks){
+    if(!req.body.id_groups || !req.body.id_TimeZones || !req.body.devices){
       throw new BadResquestError("Data is required");
     }
 
     const accessRules = {
       id_groups: req.body.id_groups as string,
       id_TimeZones: req.body.id_TimeZones as string,
-      locks: req.body.locks as Array<{id: string}>
+      devices: req.body.devices as Array<{id: string}>
     }
 
-    const dataAccessRules = await Promise.all(accessRules.locks.map(async (lock) => {
-      const locks: AccessRules | null = await prismaClient.locks.findUnique({
-        where: { id: lock.id },
+    const dataAccessRules = await Promise.all(accessRules.devices.map(async (device) => {
+      const devices: AccessRules | null = await prismaClient.devices.findUnique({
+        where: { id: device.id },
         select: {
           id: true,
-          GroupsLocks: {
+          GroupsDevices: {
             where: {
               id_groups: { equals: accessRules.id_groups }
             },
             select: { code: true }
           },
-          TimeZonesLocks: {
+          TimeZonesDevices: {
             where: {
               id_TimeZones: { equals: accessRules.id_TimeZones }
             },
@@ -38,20 +38,20 @@ export class AcccessRulesController {
         }
       });
   
-      if (!locks) {
-        throw new BadResquestError("Lock not found");
+      if (!devices) {
+        throw new BadResquestError("Device not found");
       }
       
-      return locks;
+      return devices;
     }))
 
-    const dataUnitsCodes: Array<DataLockCode> = await createAccessRulesLocks(dataAccessRules);
+    const dataUnitsCodes: Array<DataDeviceCode> = await createAccessRulesDevices(dataAccessRules);
 
     const newAccessRules = await Promise.all(dataUnitsCodes.map(async (unitCode) => {
       const newAccessRules = await prismaClient.acccessRules.create({
         data: {
           code: unitCode.code,
-          id_locks: unitCode.id,
+          id_devices: unitCode.id,
           id_groups: accessRules.id_groups,
           id_TimeZones: accessRules.id_TimeZones
         }

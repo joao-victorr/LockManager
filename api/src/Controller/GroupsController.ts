@@ -1,24 +1,24 @@
 import type { Request, Response } from 'express';
 import { type Prisma, prismaClient } from '../databases/PrismaClient';
 
-import { createGroupLocks } from '../LockController/Groups/CreateGroupsLocks';
+import { createGroupDevices } from '../DevicesController/Groups/CreateGroupsDevices';
 import { ApiError, BadResquestError } from '../helpers/apiErrors';
-import type { DataLockCode, Group } from '../helpers/types';
-// import { deletDataLock } from '../LockController/Groups/DeleteGroupsLocks';
+import type { DataDeviceCode, Group } from '../helpers/types';
+// import { deletDataDevice } from '../DeviceController/Groups/DeleteGroupsDevices';
 
 export class GroupsController {
   
   async create(req: Request, res: Response) {
-    if(!req.body.name || !req.body.locks) {
+    if(!req.body.name || !req.body.devices) {
       throw new BadResquestError("Data Not Found")
     }
     
     const group: Group = {
       name: req.body.name,
-      locks: req.body.locks
+      devices: req.body.devices
     }
     
-    const codeAllGroupsLocks: Array<DataLockCode> = await createGroupLocks(group);
+    const codeAllGroupsDevices: Array<DataDeviceCode> = await createGroupDevices(group);
     
       const newGroup = await prismaClient.$transaction(async (tx: Prisma.TransactionClient) => {
       const newGroup = await tx.groups.create({
@@ -27,19 +27,19 @@ export class GroupsController {
         },
       })
 
-      const newGroupLock = await Promise.all(
-        codeAllGroupsLocks.map(async(e) => {
-          const GroupsLock = await tx.groupsLocks.create({
+      const newGroupDevice = await Promise.all(
+        codeAllGroupsDevices.map(async(e) => {
+          const GroupsDevice = await tx.groupsDevices.create({
             data: {
               code: e.code,
               id_groups: newGroup.id,
-              id_locks: e.id
+              id_devices: e.id
             }
           })
-          return GroupsLock;
+          return GroupsDevice;
         })
       )
-      return {newGroup, newGroupLock}
+      return {newGroup, newGroupDevice}
     })
 
     return res.status(201).json({department: newGroup})
@@ -56,11 +56,11 @@ export class GroupsController {
       const dataDepartment = await prismaClient.groups.findUnique({
         where: {id: group.id},
         include: {
-          GroupsLocks: {
+          GroupsDevices: {
             select: {
-              id_locks: true,
+              id_devices: true,
               code: true,
-              locks: {
+              devices: {
                 select: {
                   name: true                  
                 }
@@ -76,11 +76,11 @@ export class GroupsController {
       const dataDepartment = await prismaClient.groups.findMany({
         where: {id: group.id},
         include: {
-          GroupsLocks: {
+          GroupsDevices: {
             select: {
-              id_locks: true,
+              id_devices: true,
               code: true,
-              locks: {
+              devices: {
                 select: {
                   name: true                  
                 }
@@ -94,11 +94,11 @@ export class GroupsController {
 
     const dataDepartment = await prismaClient.groups.findMany({
       include: {
-        GroupsLocks: {
+        GroupsDevices: {
           select: {
             id: true,
             code: true,
-            locks: {
+            devices: {
               select: {
                 id: true,
                 name: true                  
@@ -127,10 +127,10 @@ export class GroupsController {
     //   where: {id},
     //   select: {
     //     id: true,
-    //     DepartmentLock: {
+    //     DepartmentDevice: {
     //       select: {
     //         code: true,
-    //         id_lock: true
+    //         id_device: true
     //       }
     //     }
     //   }
@@ -142,7 +142,7 @@ export class GroupsController {
 
     // await prismaClient.$transaction(async (tx: any) => {
 
-    //   await tx.departmentLock.deleteMany({
+    //   await tx.departmentDevice.deleteMany({
     //     where: {
     //       id_department: {
     //         equals: dataDepartment.id
@@ -150,7 +150,7 @@ export class GroupsController {
     //     }
     //   })
 
-    //   await deletDataLock(dataDepartment)
+    //   await deletDataDevice(dataDepartment)
 
     //   await tx.department.delete({
     //     where: {

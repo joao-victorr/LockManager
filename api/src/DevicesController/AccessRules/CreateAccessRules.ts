@@ -2,12 +2,12 @@
 import axios, { type AxiosResponse } from 'axios';
 
 import { ApiError, BadResquestError } from '../../helpers/apiErrors';
-import type { AccessRules, DataLockCode } from '../../helpers/types';
-import { allLocksSessions } from "../LoginLock";
+import type { AccessRules, DataDeviceCode } from '../../helpers/types';
+import { allDevicesSessions } from "../LoginDevice";
 
-//Function to create locks for access rules
-export async function createAccessRulesLocks(data: Array<AccessRules>) {
-  const allGroupCodesLocks : Array<DataLockCode> = [];
+//Function to create Devices for access rules
+export async function createAccessRulesDevices(data: Array<AccessRules>) {
+  const allGroupCodesDevices : Array<DataDeviceCode> = [];
 
   if(data.length === 0) {
     throw new BadResquestError("Unit is empty")
@@ -15,24 +15,24 @@ export async function createAccessRulesLocks(data: Array<AccessRules>) {
 
   //Definition of access_rules data for registered
   const dataAccessRules = data.map(e => {
-    //Association of the lock ID with the corresponding session
-    const locksData = allLocksSessions.find(locks => locks.id === e.id);
-    if(!locksData) {
+    //Association of the Device ID with the corresponding session
+    const devicesData = allDevicesSessions.find(devices => devices.id === e.id);
+    if(!devicesData) {
       throw new ApiError("Error ao relacionar unidades enviadas com unidades existentes.", 500)
     };
 
     const dataAccessRules = {
       id: e.id,
-      ip: locksData.ip,
-      session: locksData.session,
-      groupsLocks: e.GroupsLocks[0].code,
-      timeZonesLocks: e.TimeZonesLocks[0].code
+      ip: devicesData.ip,
+      session: devicesData.session,
+      groupsDevices: e.GroupsDevices[0].code,
+      timeZonesDevices: e.TimeZonesDevices[0].code
     }
 
     return dataAccessRules;
   })
   
-  //Access_rules registration in each lock
+  //Access_rules registration in each Device
   for(const accessRules of dataAccessRules) {
     const url = `http://${accessRules.ip}/create_objects.fcgi?session=${accessRules.session}`;
 
@@ -42,7 +42,7 @@ export async function createAccessRulesLocks(data: Array<AccessRules>) {
         {
             object: "access_rules",
             values: [{ 
-              "name": `(Regra de Acesso automaticamente criada para o Grupo ${accessRules.groupsLocks})`,
+              "name": `(Regra de Acesso automaticamente criada para o Grupo ${accessRules.groupsDevices})`,
               "type": 1,
               "priority": 0
             }]
@@ -61,7 +61,7 @@ export async function createAccessRulesLocks(data: Array<AccessRules>) {
       {
           object: "group_access_rules",
           values: [{ 
-            "group_id": accessRules.groupsLocks,
+            "group_id": accessRules.groupsDevices,
             "access_rule_id": resAccessRules.ids[0]
           }]
       },
@@ -80,7 +80,7 @@ export async function createAccessRulesLocks(data: Array<AccessRules>) {
           object: "access_rule_time_zones",
           values: [{ 
             "access_rule_id": resAccessRules.ids[0],
-            "time_zone_id": accessRules.timeZonesLocks
+            "time_zone_id": accessRules.timeZonesDevices
           }]
       },
       {
@@ -90,8 +90,8 @@ export async function createAccessRulesLocks(data: Array<AccessRules>) {
       }
     )    
     const dataUnitCode = {id: accessRules.id, code: resAccessRules.ids[0]}
-    allGroupCodesLocks.push(dataUnitCode);
+    allGroupCodesDevices.push(dataUnitCode);
   }
 
-  return allGroupCodesLocks;
+  return allGroupCodesDevices;
 }

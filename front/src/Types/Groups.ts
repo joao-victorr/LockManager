@@ -1,6 +1,6 @@
 
 
-export interface Group {
+export type Group = {
   id: string;
   name: string;
 }

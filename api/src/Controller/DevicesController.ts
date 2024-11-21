@@ -3,14 +3,14 @@ import { prismaClient } from '../databases/PrismaClient';
 import { BadResquestError } from '../helpers/apiErrors';
 
 
-export class LocksController {
+export class DevicesController {
 
   async create(req: Request, res: Response) {
 
     if(!req.body.name || !req.body.ip || !req.body.user || !req.body.password || req.body.status == null) {
       throw new BadResquestError("Data not found")
     }
-    const lock = {
+    const device = {
         name: req.body.name.toUpperCase(),
         ip: req.body.ip,
         user: req.body.user,
@@ -18,8 +18,8 @@ export class LocksController {
         status: req.body.status
     }
 
-    const verifyIp = await prismaClient.locks.findUnique({
-      where: { ip: lock.ip },
+    const verifyIp = await prismaClient.devices.findUnique({
+      where: { ip: device.ip },
       select: {
         id: true,
         ip: true
@@ -27,28 +27,28 @@ export class LocksController {
     })
 
     if(verifyIp) {
-      throw new BadResquestError("Lock with this IP already exists")
+      throw new BadResquestError("Device with this IP already exists")
     }
 
-    const newLock = await prismaClient.locks.create({
+    const newDevice = await prismaClient.devices.create({
         data: {
-            name: lock.name,
-            ip: lock.ip,
-            users: lock.user,
-            password: lock.password,
-            status: lock.status
+            name: device.name,
+            ip: device.ip,
+            users: device.user,
+            password: device.password,
+            status: device.status
         }
     })
 
-    return res.status(201).json({ newLock })
+    return res.status(201).json({ newDevice })
   };
 
   async read(req: Request, res: Response) {
-    const lockId = req.query.id as string
+    const deviceId = req.query.id as string
 
-    if(lockId) {
-      const dataLock = await prismaClient.locks.findUnique({
-        where: {id: lockId},
+    if(deviceId) {
+      const dataDevice = await prismaClient.devices.findUnique({
+        where: {id: deviceId},
         select: {
           id: true,
           name: true,
@@ -56,14 +56,14 @@ export class LocksController {
           users: true,
           password: true,
           status: true,
-          GroupsLocks: {
+          GroupsDevices: {
             select: {
               id: true,
               code: true,
               groups: true
             }
           },
-          UsersLocks: {
+          UsersDevices: {
             select: {
               id: true,
               code: true,
@@ -72,10 +72,10 @@ export class LocksController {
           }
         }
       })
-      return res.status(200).json({lock: dataLock})
+      return res.status(200).json({device: dataDevice})
     }
 
-    const dataLock = await prismaClient.locks.findMany({
+    const dataDevice = await prismaClient.devices.findMany({
       select: {
         id: true,
         name: true,
@@ -83,14 +83,14 @@ export class LocksController {
         users: true,
         password: true,
         status: true,
-        GroupsLocks: {
+        GroupsDevices: {
           select: {
             id: true,
             code: true,
             groups: true
           }
         },
-        UsersLocks: {
+        UsersDevices: {
           select: {
             id: true,
             code: true,
@@ -100,7 +100,7 @@ export class LocksController {
       }
     })
 
-    return res.status(200).json({devices: dataLock})
+    return res.status(200).json({devices: dataDevice})
     
   };
 
@@ -109,30 +109,30 @@ export class LocksController {
   };
 
   async delete(req: Request, res: Response) {
-    const lockId = req.body.id as string
+    const deviceId = req.body.id as string
 
-    if(!lockId) {
+    if(!deviceId) {
       throw new BadResquestError("Id is required")
     }
 
-    const countAccessLock = await prismaClient.usersLocks.count({
+    const countAccessDevice = await prismaClient.usersDevices.count({
       where: {
-        id_locks: lockId
+        id_devices: deviceId
       }
     })
 
-    const countDepartmentLock = await prismaClient.groupsLocks.count({
+    const countDepartmentDevice = await prismaClient.groupsDevices.count({
       where: {
-        id_locks: lockId
+        id_devices: deviceId
       }
     })
 
-    if(countAccessLock !== 0 || countDepartmentLock !== 0) {
+    if(countAccessDevice !== 0 || countDepartmentDevice !== 0) {
       throw new BadResquestError("unit contains registered access.")
     }
 
-    if(countDepartmentLock === 0 && countAccessLock === 0) {
-      await prismaClient.locks.delete({where: {id: lockId}})
+    if(countDepartmentDevice === 0 && countAccessDevice === 0) {
+      await prismaClient.devices.delete({where: {id: deviceId}})
       return res.status(200).json({success: true})
     }
   };

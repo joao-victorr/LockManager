@@ -1,18 +1,18 @@
 
 import axios, { type AxiosResponse } from 'axios';
 
-import { allLocksSessions } from "../LoginLock";
-import type { Users, DataLockCode } from '../../helpers/types';
 import { BadResquestError } from '../../helpers/apiErrors';
+import type { DataDeviceCode, Users } from '../../helpers/types';
+import { allDevicesSessions } from "../LoginDevice";
 
-//Function to create locks for User
-export async function createUserLock(data: Users) {
-    const allCodeAccessLock: Array<DataLockCode> = [];
+//Function to create Devices for User
+export async function createUserDevice(data: Users) {
+    const allCodeAccessDevice: Array<DataDeviceCode> = [];
 
     //Definition of user data for registered
-    const users = data.locks.map(e => {
-        //Association of the lock ID with the corresponding session
-        const unitData = allLocksSessions.find(unit => unit.id === e.id);
+    const users = data.devices.map(e => {
+        //Association of the Device ID with the corresponding session
+        const unitData = allDevicesSessions.find(unit => unit.id === e.id_device);
         if(!unitData) {
             throw new BadResquestError("Error in unit association a session")
         }
@@ -27,7 +27,7 @@ export async function createUserLock(data: Users) {
         return user;
     })
 
-    //User registration in each lock
+    //User registration in each device
     for(const user of users) {
 
         const url = `http://${user.ip}/create_objects.fcgi?session=${user.session}`;
@@ -50,7 +50,7 @@ export async function createUserLock(data: Users) {
         )
         const dataUser = addUser.data;
         const dataUnitCode = {id: user.id, code: dataUser.ids[0]}
-        allCodeAccessLock.push(dataUnitCode);
+        allCodeAccessDevice.push(dataUnitCode);
 
         const urlAddPhoto = `http://${user.ip}/user_set_image.fcgi?user_id=${dataUser.ids[0]}&match=0&timestamp=1624997578&session=${user.session}`;
         const image = user.image
@@ -65,5 +65,5 @@ export async function createUserLock(data: Users) {
         )
     }
 
-    return allCodeAccessLock;
+    return allCodeAccessDevice;
 }
