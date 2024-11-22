@@ -9,26 +9,6 @@ export class DevicesGroupsController {
 
   async read(req: Request, res: Response) {
     
-
-    const data = await prismaClient.groupsDevices.findMany({
-      include: {
-        groups: {
-          select: {
-            id: true,
-            name: true
-          }
-        },
-        devices: {
-          select: {
-            id: true,
-            name: true
-          }
-        }
-      }
-    })
-
-    return res.status(200).json({ groupsDevices: data });
-
   };
 
   async update(req: Request, res: Response) {

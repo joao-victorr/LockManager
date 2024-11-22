@@ -2,7 +2,6 @@ import bcrypt from 'bcrypt';
 import type { Request, Response } from 'express';
 import { prismaClient } from '../databases/PrismaClient';
 
-import { loginDevice } from '../DevicesController/LoginDevice';
 import { generateToken, verifyToken } from '../middleware/PassportMiddleware';
 
 import { BadResquestError, UnauthorazedError } from '../helpers/apiErrors';
@@ -33,16 +32,12 @@ export class AuthController {
 
     const { password:  _, ...user } = data
 
-    await loginDevice();
     const token = generateToken(user);
-    // console.log(token, user);
     return res.status(200).json({user, token: token});
   };
 
   async token(req: Request, res: Response) {    
     const userToken = req.query.token as string
-
-    // console.log(userToken)
 
     if(!userToken) {
       throw new BadResquestError("Token not found")
