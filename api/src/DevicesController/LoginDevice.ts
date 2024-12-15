@@ -1,13 +1,7 @@
-import axios from "axios";
+import type { AxiosError, AxiosResponse } from "axios";
+import axiosInstance from "../helpers/AxiosInstance";
+import { ApiError } from "../helpers/apiErrors";
 
-// Interfaces para as respostas da API
-interface SessionResponse {
-  session: string;
-}
-
-interface SessionValidityResponse {
-  session_is_valid: boolean;
-}
 
 // Classe AuthDevice
 export class AuthDevice {
@@ -24,40 +18,39 @@ export class AuthDevice {
   }
 
   // Wrapper para chamadas POST com tratamento de erros centralizado
-  private async post<T>(endpoint: string, data?: object): Promise<T | null> {
+  private async post(endpoint: string, data?: object): Promise<AxiosResponse | null> {
     try {
-      const res = await axios.post<T>(`${this.baseUrl}${endpoint}`, data);
-      return res.data;
-    } catch (error) {
-      console.error(`Erro ao acessar ${endpoint}:`, error);
-      return null;
+      return await axiosInstance.post(`${this.baseUrl}${endpoint}`, data);
+    } catch (error: any) {
+      if (error.code === 'ECONNABORTED') {
+        return null; // Retorna `null` no caso de timeout
+      }
+      throw error; // Relança outros erros
     }
   }
 
   // Método para autenticar o token
   async authenticateToken(token: string): Promise<boolean> {
-    const data = await this.post<SessionValidityResponse>(
-      `/session_is_valid.fcgi?session=${token}`
-    );
-    return data?.session_is_valid || false;
+    const data = await this.post(`/session_is_valid.fcgi?session=${token}`);
+    if (!data) {
+      return false;
+    }
+  
+    return data.data.session_is_valid || false;
   }
 
   // Método para login
-  async login(): Promise<{ success: boolean; session?: string; error?: string }> {
-    if (!this.username || !this.password) {
-      return { success: false, error: "Username e senha são obrigatórios." };
-    }
-
-    const data = await this.post<SessionResponse>("/login.fcgi", {
-      username: this.username,
+  async login(): Promise<{ status: boolean; session?: string; code: number }> {
+    const data = await this.post("/login.fcgi", {
+      login: this.username,
       password: this.password,
     });
-
+  
     if (!data) {
-        return { success: false, error: "Erro ao realizar o login." };
+      return { status: false, code: 408 }; // Código HTTP 408 para indicar timeout
     }
-
-    return { success: true, session: data.session };
+  
+    return { status: data.statusText === "OK", session: data.data?.session, code: data.status };
   }
 
   // Método para logout
@@ -65,15 +58,14 @@ export class AuthDevice {
     if (!token) {
       return { success: false, error: "Token é obrigatório para logout." };
     }
-
-    const success = await this.post<{ success: boolean }>(
-      `/logout.fcgi?session=${token}`
-    );
-
-    if (!success) {
-        return { success: false, error: "Erro ao realizar o logout." };
+  
+    const data = await this.post(`/logout.fcgi?session=${token}`);
+  
+    if (!data) {
+      return { success: false, error: "Timeout ao tentar realizar o logout." };
     }
-
-    return { success: true };
+  
+    return { success: data.statusText.toLowerCase() === "ok" };
   }
+  
 }

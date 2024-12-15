@@ -1,86 +1,147 @@
-import axios, { type AxiosResponse } from 'axios';
+import axiosInstance from "../../helpers/AxiosInstance";
 
-import { ApiError, BadResquestError } from '../../helpers/apiErrors';
-import type { DataTimesDeviceCode, Times } from '../../helpers/types';
-import { allDevicesSessions } from "../LoginDevice";
+type Device = {
+    id: string;
+    ip: string;
+    session: string;
+}
 
-//Function to create Devices for Times_Zones and Times_Spans
-export async function createTimesDevices(data: Times) {
-  const allTimesCodesDevices : Array<DataTimesDeviceCode> = [];
+type TimeZone = {
+    id: string;
+    name: string;
+}
 
-  if(data.devices.length === 0) {
-    throw new BadResquestError("Unit is empty")
-  }
+type TimeSpan = {
+    id: string;
+    start: number;
+    end: number;
+    sun: number;
+    mon: number;
+    tue: number;
+    wed: number;
+    thu: number;
+    fri: number;
+    sat: number;
+    hol1: number;
+    hol2: number;
+    hol3: number;
+    timeZonesId: string;
+}
 
-  //Definition of Times_Zones and Times_Spans data for registered
-  const times = data.devices.map(e => {
-    //Association of the Device ID with the corresponding session
-    const unitData = allDevicesSessions.find(unit => unit.id === e.id);
-    if(!unitData) {
-        throw new ApiError("Error ao relacionar unidades enviadas com unidades existentes.", 500)
-    };
+type ResCreateObject = {
+    ids: number[];
+}
 
-    const time = {
-      id: e.id,
-      name: data.name,
-      ip: unitData.ip,
-      session: unitData.session,
-      timesSpans: data.timesSpans
+type ResDeleteObject = {
+    changes: number;
+}
+
+export class TimeZoneDevice {
+    timeZone: TimeZone;
+    device: Device;
+
+    constructor(timeZone: TimeZone, device: Device) {
+        this.timeZone = timeZone;
+        this.device = device;
     }
 
-    return time;
-  })
+    private baseUrl(ip: string, uri: string, session: string): string {
+        return `http://${ip}/${uri}session=${session}`;
+    }
 
-  //Usser_Group registration in each Device
-  for(const time of times) {
-    const url = `http://${time.ip}/create_objects.fcgi?session=${time.session}`;
+    async createTimeZone(): Promise<ResCreateObject> {
+        const uri = 'create_objects.fcgi?';
+        const url = this.baseUrl(this.device.ip, uri, this.device.session);
 
-    //Request of create time_zones
-    const newZones: AxiosResponse = await axios.post(
-      url,
-      {
-          object: "time_zones",
-          values: [{ name: time.name }]
-      },
-      {
-          headers: {
-              "content-type": "application/json"
-          }
-      }
-    )
-    const dataZones = newZones.data;
+        const payload = {
+            object: "time_zones",
+            values: [
+                {
+                    id: this.timeZone.id,
+                    name: this.timeZone.name,
+                },
+            ],
+        };
 
-    //Request of create time_spans
-    const newSpans: AxiosResponse = await axios.post(
-      url,
-      {
-          object: "time_spans",
-          values: [{
-            time_zone_id: dataZones.ids[0],
-            start: time.timesSpans.start,
-            end: time.timesSpans.end,
-            sun: time.timesSpans.sun,
-            mon: time.timesSpans.mon,
-            tue: time.timesSpans.tue,
-            wed: time.timesSpans.wed,
-            thu: time.timesSpans.thu,
-            fri: time.timesSpans.fri,
-            sat: time.timesSpans.sat,
-            hol1: time.timesSpans.hol1,
-            hol2: time.timesSpans.hol2,
-            hol3: time.timesSpans.hol3
-          }]
-      },
-      {
-          headers: {
-              "content-type": "application/json"
-          }
-      }
-    )
-    const dataSpans = newSpans.data;
-    const dataUnitCode = {id: time.id, codeZones: dataZones.ids[0], codeSpans: dataSpans.ids[0]}
-    allTimesCodesDevices.push(dataUnitCode);
-  }
+        const response = await axiosInstance.post(url, payload, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
 
-  return allTimesCodesDevices;
+        return response.data as ResCreateObject;
+    }
+
+    async deleteTimeZone(): Promise<ResDeleteObject> {
+        const uri = 'destroy_objects.fcgi?';
+        const url = this.baseUrl(this.device.ip, uri, this.device.session);
+
+        const response = await axiosInstance.post(url, {
+            "object": "time_zones",
+            "ids": [this.timeZone.id]
+        });
+
+        return response.data as ResDeleteObject;
+    }
+}
+
+export class TimeSpanDevice {
+    timeSpan: TimeSpan;
+    device: Device;
+
+    constructor(timeSpan: TimeSpan, device: Device) {
+        this.timeSpan = timeSpan;
+        this.device = device;
+    }
+
+    private baseUrl(ip: string, uri: string, session: string): string {
+        return `http://${ip}/${uri}session=${session}`;
+    }
+
+    async createTimeSpan(): Promise<ResCreateObject> {
+        const uri = 'create_objects.fcgi?';
+        const url = this.baseUrl(this.device.ip, uri, this.device.session);
+
+        const payload = {
+            object: "time_spans",
+            values: [
+                {
+                    id: this.timeSpan.id,
+                    start: this.timeSpan.start,
+                    end: this.timeSpan.end,
+                    sun: this.timeSpan.sun,
+                    mon: this.timeSpan.mon,
+                    tue: this.timeSpan.tue,
+                    wed: this.timeSpan.wed,
+                    thu: this.timeSpan.thu,
+                    fri: this.timeSpan.fri,
+                    sat: this.timeSpan.sat,
+                    hol1: this.timeSpan.hol1,
+                    hol2: this.timeSpan.hol2,
+                    hol3: this.timeSpan.hol3,
+                    time_zone_id: this.timeSpan.timeZonesId,
+                },
+            ],
+        };
+
+        const response = await axiosInstance.post(url, payload, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        return response.data as ResCreateObject;
+    }
+
+    async deleteTimeSpan(): Promise<ResDeleteObject> {
+        const uri = 'destroy_objects.fcgi?';
+        const url = this.baseUrl(this.device.ip, uri, this.device.session);
+
+        const response = await axiosInstance.post(url, {
+            "object": "time_spans",
+            "ids": [this.timeSpan.id]
+        });
+
+        return response.data as ResDeleteObject;
+    }
 }

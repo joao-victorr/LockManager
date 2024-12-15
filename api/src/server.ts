@@ -10,8 +10,6 @@ import passport from 'passport';
 import { BadResquestError } from "./helpers/apiErrors";
 import { ErrorMiddleware } from "./middleware/ErrorMiddleware";
 import { router } from './router'
-import { updateDateTime } from "./scripts/dataAndHors";
-
 
 dotenv.config();
 const server = express();
@@ -34,13 +32,9 @@ server.use((req: Request, res: Response) => {
     throw new BadResquestError("Router Not Found")
 });
 
-// cron.schedule('0 4 * * *', () => {
-//     updateDateTime();
-// });
 
 server.use(ErrorMiddleware)
 
 server.listen(process.env.PORT, () => {
     console.log(`Servidor rodando na porta ${process.env.PORT}`);
-    // updateDateTime()
 });

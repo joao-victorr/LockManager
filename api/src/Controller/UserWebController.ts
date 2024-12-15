@@ -7,6 +7,7 @@ import type { UserWeb } from '../helpers/types';
 import { generateToken } from '../middleware/PassportMiddleware';
 
 
+
 export class UserWebController {
 
   async create(req: Request, res: Response) {

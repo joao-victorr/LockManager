@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,111 +7,111 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model UsersWeb {
+model usersWeb {
   id       String @id @default(cuid())
   name     String
   email    String @unique
   password String
 
-  @@map("users_web")
+  @@map("usersWeb")
 }
 
-model Devices {
+model devices {
   id               String             @id @default(cuid())
   name             String
   ip               String             @unique
-  users            String
+  user             String
   password         String
   status           Boolean            @default(true)
-  UsersDevices     UsersDevices[]
-  GroupsDevices    GroupsDevices[]
-  TimeZonesDevices TimeZonesDevices[]
-  TimeSpansDevices TimeSpansDevices[]
-  AcccessRrules    AcccessRules[]
-  UsersGroups      UsersGroups[]
+  usersDevices     usersDevices[]
+  groupsDevices    groupsDevices[]
+  timeZonesDevices timeZonesDevices[]
+  timeSpansDevices timeSpansDevices[]
+  accessRules      accessRules[]
+  usersGroups      usersGroups[]
 
   @@map("devices")
 }
 
-model Users {
-  id           String         @id @default(cuid())
+model users {
+  id           Int            @id @default(autoincrement())
   name         String
-  image        Bytes
-  UsersDevices UsersDevices[]
-  UsersGroups  UsersGroups[]
+  image        String?
+  beginTime    Int?
+  endTime      Int?
+  usersDevices usersDevices[]
+  usersGroups  usersGroups[]
 
   @@map("users")
 }
 
-model UsersGroups {
-  id         String  @id @default(cuid())
-  id_devices String
-  devices    Devices @relation(fields: [id_devices], references: [id])
-  id_users   String
-  users      Users   @relation(fields: [id_users], references: [id])
-  id_groups  String
-  groups     Groups  @relation(fields: [id_groups], references: [id])
+model usersGroups {
+  id        Int     @id @default(autoincrement())
+  idDevices String
+  devices   devices @relation(fields: [idDevices], references: [id])
+  idUsers   Int
+  users     users   @relation(fields: [idUsers], references: [id])
+  idGroups  Int
+  groups    groups  @relation(fields: [idGroups], references: [id])
 
-  @@map("users_groups")
+  @@map("usersGroups")
 }
 
-model Groups {
-  id            String          @id @default(cuid())
+model groups {
+  id            Int             @id @default(autoincrement())
   name          String
-  GroupsDevices GroupsDevices[]
-  AcccessRrules AcccessRules[]
-  UsersGroups   UsersGroups[]
+  groupsDevices groupsDevices[]
+  accessRules   accessRules[]
+  usersGroups   usersGroups[]
 
   @@map("groups")
 }
 
-model UsersDevices {
-  id         String  @id @default(cuid())
-  code       Int
-  id_devices String
-  devices    Devices @relation(fields: [id_devices], references: [id])
-  id_users   String
-  users      Users   @relation(fields: [id_users], references: [id])
+model usersDevices {
+  id        Int     @id @default(autoincrement())
+  code      Int
+  idDevices String
+  devices   devices @relation(fields: [idDevices], references: [id])
+  idUsers   Int
+  users     users   @relation(fields: [idUsers], references: [id])
 
-  @@map("users_devices")
+  @@map("usersDevices")
 }
 
-model GroupsDevices {
-  id         String  @id @default(cuid())
-  code       Int
-  id_devices String
-  devices    Devices @relation(fields: [id_devices], references: [id])
-  id_groups  String
-  groups     Groups  @relation(fields: [id_groups], references: [id])
+model groupsDevices {
+  id        Int     @id @default(autoincrement())
+  code      Int
+  idDevices String
+  devices   devices @relation(fields: [idDevices], references: [id])
+  idGroups  Int
+  groups    groups  @relation(fields: [idGroups], references: [id])
 
-  @@map("groups_devices")
+  @@map("groupsDevices")
 }
 
-model TimeZones {
-  id               String             @id @default(cuid())
+model timeZones {
+  id               Int                @id @default(autoincrement())
   name             String
-  TimeSpans        TimeSpans[]
-  TimeZonesDevices TimeZonesDevices[]
-  AcccessRrules    AcccessRules[]
+  timeSpans        timeSpans[]
+  timeZonesDevices timeZonesDevices[]
+  accessRules      accessRules[]
 
-  @@map("time_zones")
+  @@map("timeZones")
 }
 
-model TimeZonesDevices {
-  id           String    @id @default(cuid())
-  code         Int
-  id_devices   String
-  devices      Devices   @relation(fields: [id_devices], references: [id])
-  id_TimeZones String
-  TimeZones    TimeZones @relation(fields: [id_TimeZones], references: [id])
+model timeZonesDevices {
+  id          Int       @id @default(autoincrement())
+  code        Int
+  idDevices   String
+  devices     devices   @relation(fields: [idDevices], references: [id])
+  idTimeZones Int
+  timeZones   timeZones @relation(fields: [idTimeZones], references: [id])
 
-  @@map("time_zones_devices")
+  @@map("timeZonesDevices")
 }
 
-model TimeSpans {
-  id               String             @id @default(cuid())
-  time_zones_id    String
-  time_zones       TimeZones          @relation(fields: [time_zones_id], references: [id])
+model timeSpans {
+  id               Int                @id @default(autoincrement())
   start            Int
   end              Int
   sun              Int
@@ -127,31 +124,33 @@ model TimeSpans {
   hol1             Int
   hol2             Int
   hol3             Int
-  TimeSpansDevices TimeSpansDevices[]
+  timeZonesId      Int
+  timeZones        timeZones          @relation(fields: [timeZonesId], references: [id])
+  timeSpansDevices timeSpansDevices[]
 
-  @@map("time_spans")
+  @@map("timeSpans")
 }
 
-model TimeSpansDevices {
-  id           String    @id @default(cuid())
-  code         Int
-  id_devices   String
-  devices      Devices   @relation(fields: [id_devices], references: [id])
-  id_TimeSpans String
-  TimeSpans    TimeSpans @relation(fields: [id_TimeSpans], references: [id])
+model timeSpansDevices {
+  id          Int       @id @default(autoincrement())
+  code        Int
+  idDevices   String
+  devices     devices   @relation(fields: [idDevices], references: [id])
+  idTimeSpans Int
+  timeSpans   timeSpans @relation(fields: [idTimeSpans], references: [id])
 
-  @@map("time_spans_devices")
+  @@map("timeSpansDevices")
 }
 
-model AcccessRules {
-  id           String    @id @default(cuid())
-  code         Int
-  id_devices   String
-  devices      Devices   @relation(fields: [id_devices], references: [id])
-  id_TimeZones String
-  timeZones    TimeZones @relation(fields: [id_TimeZones], references: [id])
-  id_groups    String
-  groups       Groups    @relation(fields: [id_groups], references: [id])
+model accessRules {
+  id          Int       @id @default(autoincrement())
+  code        Int
+  idDevices   String
+  devices     devices   @relation(fields: [idDevices], references: [id])
+  idTimeZones Int
+  timeZones   timeZones @relation(fields: [idTimeZones], references: [id])
+  idGroups    Int
+  groups      groups    @relation(fields: [idGroups], references: [id])
 
-  @@map("acccess_rules")
+  @@map("accessRules")
 }

@@ -9,7 +9,7 @@ export const ErrorMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  console.log(error)
+  console.error(error)
   if (error instanceof AxiosError) {
     const statusCode = error.response ? error.response.status : 500;
     const message = error.response ? error.response.data : "Inexpected Server Error";
