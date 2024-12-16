@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { prismaClient } from '../databases/PrismaClient';
-import SaveImageUser from '../scripts/SalveImage'; // Função para salvar a imagem
+import { saveImageUser } from '../scripts/SalveImage'; // Função para salvar a imagem
 
 export class UsersController {
 
@@ -26,7 +26,7 @@ export class UsersController {
     }
 
 
-    const imageName = await SaveImageUser(image, newUser.id);
+    const imageName = await saveImageUser(image, newUser.id);
 
     const user = await prismaClient.users.update({
       where: { id: newUser.id },

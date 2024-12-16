@@ -4,7 +4,7 @@ import path from 'node:path';
 import sharp from 'sharp';
 
 // Função para salvar a imagem com verificação do diretório
-const saveImageUser = async (image: Buffer, userId: number): Promise<string> => {
+export const saveImageUser = async (image: Buffer, userId: number): Promise<string> => {
   const timestamp = Date.now().toString();
 
   // Combina o timestamp e o ID do usuário
@@ -38,4 +38,13 @@ const saveImageUser = async (image: Buffer, userId: number): Promise<string> => 
   }
 };
 
-export default saveImageUser;
+
+export const getImage = async (imageName: string) => {
+  // Define o caminho do diretório onde a imagem será buscada
+  const imagePath = path.resolve(__dirname, `../../images/${imageName}`); // Caminho do diretório onde a imagem será buscada
+
+  const image = sharp(imagePath).toBuffer();
+  
+  return image
+}
+

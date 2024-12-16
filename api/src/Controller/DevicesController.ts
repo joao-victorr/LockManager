@@ -24,7 +24,7 @@ export class DevicesController {
     const authDevice = new AuthDevice(ip, user, password);
     const isAuthenticatedData = await authDevice.login();
 
-    if (!isAuthenticatedData.status) {
+    if (!isAuthenticatedData.session) {
       const errorMessage = httpCodeError(isAuthenticatedData.code);
       // console.log(errorMessage, isAuthenticatedData.code, "------------------------------------------------")
       throw new BadResquestError(`${errorMessage}, device returned code: ${isAuthenticatedData.code}`)
@@ -36,7 +36,7 @@ export class DevicesController {
         ip,
         user,
         password,
-        status: isAuthenticatedData.status
+        status: isAuthenticatedData.session ? true : false
       },
     })
 

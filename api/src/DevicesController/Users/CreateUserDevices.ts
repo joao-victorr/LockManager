@@ -3,11 +3,11 @@ import type { Devices } from '../../helpers/types';
 
 
 type User = {
-    id: string;
+    id: number;
     name: string;
-    beginTime: number;
-    endTime: number;
-    registration: string;
+    beginTime: number | null;
+    endTime: number | null;
+    registration: number;
     password?: string;
 }
 
@@ -51,7 +51,7 @@ export class UserDevice {
             values: [
                 {
                     id: this.user.id + 1000,
-                    registration: this.user.id,
+                    registration: "",
                     name: this.user.name,
                     password: this.user.password,
                 },

@@ -40,17 +40,17 @@ export class AuthDevice {
   }
 
   // Método para login
-  async login(): Promise<{ status: boolean; session?: string; code: number }> {
+  async login(): Promise<{ session: string | null; code: number }> {
     const data = await this.post("/login.fcgi", {
       login: this.username,
       password: this.password,
     });
   
     if (!data) {
-      return { status: false, code: 408 }; // Código HTTP 408 para indicar timeout
+      return { session: null, code: 408 }; // Código HTTP 408 para indicar timeout
     }
   
-    return { status: data.statusText === "OK", session: data.data?.session, code: data.status };
+    return { session: data.data.session, code: data.status };
   }
 
   // Método para logout
