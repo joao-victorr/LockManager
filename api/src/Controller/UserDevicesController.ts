@@ -59,7 +59,8 @@ export class UserDevicesController {
         }
 
 
-        // Cadastra o usuario no dispositivo no banco local
+
+        // Associa usuario ao dispositivo no banco local
         const createUserInDevice = await prismaClient.usersDevices.create({
           data: {
             idDevices: device.id,
@@ -67,8 +68,8 @@ export class UserDevicesController {
           }
         })
         
-        if (!userInDevice) {
-          console.error(`Erro ao cadastrar UserDevice no device ${device.id} -- ${device.name}`)
+        if (!createUserInDevice) {
+          console.error(`Erro ao cadastrar User no device local ${device.id} -- ${device.name}`)
           // // Gerar log
           return {userId: user.id, deviceId: device.id, status: false}
         }
@@ -83,8 +84,9 @@ export class UserDevicesController {
         if (!session.session) {
           console.error(`Erro ao realizar logon no device ${device.id} -- ${device.name}`)
           // // Gerar log
+         
   
-          // Atualliza o Status do dispositivo
+          // Atualliza o Status do dispositivo para false (Offline)
           await prismaClient.devices.update({
             where: { id: device.id },
             data: { status: false }
@@ -107,6 +109,7 @@ export class UserDevicesController {
 
         //Cadastra o novo usuario
         const newUserDevice = await userDevice.createUser();
+        console.table( newUserDevice )
   
         // Verifica se o cadastro foi bem sucedido, caso não tenha conseguido, retorna o status como false e gera um log e segue para o proximo cadastro
         if (!newUserDevice.ids) {

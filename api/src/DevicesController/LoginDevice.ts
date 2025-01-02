@@ -31,12 +31,12 @@ export class AuthDevice {
 
   // Método para autenticar o token
   async authenticateToken(token: string): Promise<boolean> {
-    const data = await this.post(`/session_is_valid.fcgi?session=${token}`);
-    if (!data) {
+    const response = await this.post(`/session_is_valid.fcgi?session=${token}`);
+    if (!response) {
       return false;
     }
   
-    return data.data.session_is_valid || false;
+    return response.data.session_is_valid || false;
   }
 
   // Método para login

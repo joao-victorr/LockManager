@@ -1,4 +1,5 @@
 import axios from 'axios';
+import axiosInstance from "../../helpers/AxiosInstance";
 import type { Devices } from '../../helpers/types';
 
 
@@ -58,11 +59,15 @@ export class UserDevice {
             ],
         };
 
-        const response = await axios.post(url, payload, {
+        const response = await axiosInstance.post(url, payload, {
             headers: {
                 'Content-Type': 'application/json'
             },
         });
+
+        if (response.status) {
+
+        }
 
         return response.data as ResCreateUser;
 
@@ -72,7 +77,7 @@ export class UserDevice {
         const uri = 'destroy_objects.fcgi?';
         const url = this.baseUrl(this.device.ip, uri, this.device.session);
 
-        const response = await axios.post(url, {
+        const response = await axiosInstance.post(url, {
             "object": "User",
             "ids": [this.user.id]
         });
@@ -86,7 +91,7 @@ export class UserDevice {
         const url = this.baseUrl(this.device.ip, uri, this.device.session);
 
         // Enviando a imagem como bytes no corpo da requisição
-        const response = await axios.post(url, image, {
+        const response = await axiosInstance.post(url, image, {
             headers: {
                 "Content-Type": "application/octet-stream", // Tipo de conteúdo como binário
             },
@@ -108,7 +113,7 @@ export class UserDevice {
     //     };
     
     //     try {
-    //         const response = await axios.post(url, payload, {
+    //         const response = await axiosInstance.post(url, payload, {
     //             headers: {
     //                 'Content-Type': 'application/json'
     //             }
