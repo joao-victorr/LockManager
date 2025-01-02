@@ -95,5 +95,43 @@ export class UserDevice {
         return true
     }
 
+    // async getUser(): Promise<User> {
+    //     const uri = 'load_objects.fcgi?';
+    //     const url = this.baseUrl(this.device.ip, uri, this.device.session);
+    
+    //     const payload = {
+    //         object: "users",
+    //         fields: ["id", "name"],
+    //         where: {
+    //             id: this.user.id
+    //         }
+    //     };
+    
+    //     try {
+    //         const response = await axios.post(url, payload, {
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         });
+    
+    //         if (response.data && response.data.users && response.data.users.length > 0) {
+    //             const userData = response.data.users[0];
+    //             return {
+    //                 id: userData.id,
+    //                 name: userData.name,
+    //                 registration: userData.registration,
+    //                 beginTime: userData.begin_time,
+    //                 endTime: userData.end_time,
+    //                 password: userData.password
+    //             };
+    //         } else {
+    //             throw new Error('User not found');
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching user:', error);
+    //         throw error;
+    //     }
+    // }
+
 
 }

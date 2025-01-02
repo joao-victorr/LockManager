@@ -21,6 +21,7 @@ const upload = multer({ storage });
 
 const authController = new AuthController;
 const userWebController = new UserWebController;
+
 const usersController = new UsersController;
 const devicesController = new DevicesController;
 // const groupController = new GroupsController;
@@ -30,8 +31,8 @@ const userDevicesController = new UserDevicesController();
 // const usersGroupsController = new UsersGroupsController;
 // const groupsDevicesController = new DevicesGroupsController;
 
-router.post('/login', authController.login)
-router.get('/token', authController.token)
+router.post('/login', authController.login);
+router.get('/token', authController.token);
 
 router.post('/user_web', userWebController.create);
 router.get('/user_web', privateRouter, userWebController.read);

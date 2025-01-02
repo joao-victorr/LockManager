@@ -9,6 +9,7 @@ logs
 
 *node_modules*
 *dist*
+*images*
 dist-ssr
 *.local
 *package-lock.json

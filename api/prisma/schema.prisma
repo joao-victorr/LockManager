@@ -69,7 +69,6 @@ model groups {
 
 model usersDevices {
   id        Int     @id @default(autoincrement())
-  code      Int
   idDevices String
   devices   devices @relation(fields: [idDevices], references: [id])
   idUsers   Int
@@ -80,7 +79,6 @@ model usersDevices {
 
 model groupsDevices {
   id        Int     @id @default(autoincrement())
-  code      Int
   idDevices String
   devices   devices @relation(fields: [idDevices], references: [id])
   idGroups  Int
@@ -101,7 +99,6 @@ model timeZones {
 
 model timeZonesDevices {
   id          Int       @id @default(autoincrement())
-  code        Int
   idDevices   String
   devices     devices   @relation(fields: [idDevices], references: [id])
   idTimeZones Int

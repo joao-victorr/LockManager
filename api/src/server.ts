@@ -7,7 +7,7 @@ import express, { ErrorRequestHandler, type Request, type Response } from 'expre
 import cron from 'node-cron';
 
 import passport from 'passport';
-import { BadResquestError } from "./helpers/apiErrors";
+import { BadResquestError, NotFoundError } from "./helpers/apiErrors";
 import { ErrorMiddleware } from "./middleware/ErrorMiddleware";
 import { router } from './router'
 
@@ -22,14 +22,16 @@ server.use(express.static(path.join(__dirname, '../public')));
 
 server.use(passport.initialize());
 
-server.use(router)
 
-server.use("/", (req: Request, res: Response) => {
-    res.send("Hello World")
+
+server.use("/ping", (req: Request, res: Response) => {
+    res.send("Pong")
 })
 
+server.use(router)
+
 server.use((req: Request, res: Response) => {
-    throw new BadResquestError("Router Not Found")
+    throw new NotFoundError("Router Not Found")
 });
 
 
