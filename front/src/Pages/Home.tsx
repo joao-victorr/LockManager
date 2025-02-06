@@ -43,7 +43,10 @@ export const Home = ({ children }: Prop) => {
             <Link to="/department">Department</Link>
           </li>
           <li>
-            <Link to="/Config">Config</Link>
+            <Link to="/access">Access</Link>
+          </li>
+          <li>
+            <Link to="/config">Config</Link>
           </li>
         </ul>
         <span className='relative' onClick={handleClickDropDownMenuUser} onKeyUp={handleClickDropDownMenuUser}>
