@@ -54,6 +54,7 @@ model usersGroups {
   idGroups  Int
   groups    groups  @relation(fields: [idGroups], references: [id])
 
+  @@unique([idUsers, idGroups])
   @@map("usersGroups")
 }
 
@@ -74,6 +75,7 @@ model usersDevices {
   idUsers   Int
   users     users   @relation(fields: [idUsers], references: [id])
 
+  @@unique([idUsers, idDevices])
   @@map("usersDevices")
 }
 
@@ -84,6 +86,7 @@ model groupsDevices {
   idGroups  Int
   groups    groups  @relation(fields: [idGroups], references: [id])
 
+  @@unique([idGroups, idDevices])
   @@map("groupsDevices")
 }
 

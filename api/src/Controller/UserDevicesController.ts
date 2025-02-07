@@ -1,7 +1,8 @@
 import type { Request, Response } from 'express';
 import { AuthDevice } from '../DevicesController/LoginDevice';
-import { UserDevice } from '../DevicesController/Users/CreateUserDevices';
+import { UserDevice } from '../DevicesController/Users/UserDevices';
 import { prismaClient } from '../databases/PrismaClient';
+import { httpCodeError } from '../helpers/AxiosInstance';
 import { ApiError, BadResquestError } from '../helpers/apiErrors';
 import { getImage } from '../scripts/SalveImage';
 
@@ -22,7 +23,7 @@ export class UserDevicesController {
       throw new BadResquestError("User not found");
     }
 
-    //PEGAR ID DO USUARIO
+    //PEGAR A FOTO DO USUARIO
     const userImage = user.image ? await getImage(user.image) : null;
 
     //PEGANDO DADOS DOS DISPOSITIVOS
@@ -41,118 +42,143 @@ export class UserDevicesController {
 
     // CADASTRANDO USUARIO NO DISPOSITIVO
     const newUserDevices = await Promise.all(
-      devices.map(async device => {
-
-        // Verifica se o dispositivo já possui o usuario cadastrado
-        const userInDevice = await prismaClient.usersDevices.findFirst({
-          where: {
-            idUsers: user.id,
-            idDevices: device.id,
-          }
-        })
-
-        // Se o dispositivo já possui o usuario cadastrado, retorna true para esse dispositivo
-        if (userInDevice) {
-          // console.error(`Usuario ja cadastrado no device ${device.id} -- ${device.name}`)
-          // // Gerar log
-          return { userId: user.id, deviceId: device.id, status: true }
-        }
-
-
-
-        // Associa usuario ao dispositivo no banco local
-        const createUserInDevice = await prismaClient.usersDevices.create({
-          data: {
-            idDevices: device.id,
-            idUsers: user.id,
-          }
-        })
-        
-        if (!createUserInDevice) {
-          console.error(`Erro ao cadastrar User no device local ${device.id} -- ${device.name}`)
-          // // Gerar log
-          return {userId: user.id, deviceId: device.id, status: false}
-        }
-
-
-        // Instancia um novo dispositivo
-        const Device = new AuthDevice(device.ip, device.user, device.password );
+      devices.map( async (device) => {
+        const authDevice = new AuthDevice(device.ip, device.user, device.password)
+        const session = await authDevice.login();
   
-        const session = await Device.login();
-  
-        // Verifique se o dispositivo esta acessivel e se conseguiu realizar o login, caso não tenha conseguido, retorna o status como false e gera um log e segue para o proximo cadastro
+        //Verifica se a sessão foi gerada com sucesso. Caso não tenha sido gerada, retorna um objeto com o status igual a falso
         if (!session.session) {
-          console.error(`Erro ao realizar logon no device ${device.id} -- ${device.name}`)
-          // // Gerar log
-         
-  
-          // Atualliza o Status do dispositivo para false (Offline)
-          await prismaClient.devices.update({
-            where: { id: device.id },
-            data: { status: false }
-          })
-          return {userId: user.id, deviceId: device.id, status: false}
+          console.error(`Error in login to device: id: ${device.id} - Name: ${device.name}`);
+          // Bloqueio o dispositivo
+          // Gera logs
+          return { userId: user.id, deviceId: device.id, status: false, image: false }
         }
   
-        // Instancia um novo usuario
-        const userDevice = new UserDevice({
-          id: user.id,
-          name: user.name,
-          beginTime: user.beginTime,
-          endTime: user.endTime,
-          registration: user.id,
-        }, {
-          id: device.id,
-          ip: device.ip,
-          session: session.session
-        })
-
-        //Cadastra o novo usuario
-        const newUserDevice = await userDevice.createUser();
-        console.table( newUserDevice )
+        //Instancia uma nova classe para criação dos usuario nos dispositivos
+        const userDevice = new UserDevice(
+          {
+            id: user.id,
+            name: user.name,
+            beginTime: user.beginTime,
+            endTime: user.endTime,
+            password: null
+          },
+          {
+            id: device.id,
+            ip: device.ip,
+            session: session.session
+          }
+        )
   
-        // Verifica se o cadastro foi bem sucedido, caso não tenha conseguido, retorna o status como false e gera um log e segue para o proximo cadastro
-        if (!newUserDevice.ids) {
-          console.error(`Erro ao cadastrar UserDevice no device ${device.id} -- ${device.name}`)
-
-          // Apagando usuario do banco de dados local
-          await prismaClient.usersDevices.delete({
+        // Verifica a existencia do usuario no dispositivo
+        const isUserInDevice = await userDevice.getUser();
+  
+  
+        // Caso o usuario já esteja casdastrado no dispositivo, verifica se também esta cadastrado no banco de dados, caso não esteja cadastro e retorno a função
+        if (isUserInDevice.user) {
+          const isUserAssociatedDivice = await prismaClient.usersDevices.findUnique({
             where: {
-              id: createUserInDevice.id
+              idUsers_idDevices: {
+                idUsers: user.id,
+                idDevices: device.id
+              }
             }
           })
-
-          // // Gerar log
   
-          return {userId: user.id, deviceId: device.id, status: false}
+          //Verifica se existe, se existir retorno true
+          if (isUserAssociatedDivice) {
+            console.error(`User already associated with device: idUser: ${user.id} - idDevice: ${device.id}`);
+            
+            return { userId: user.id, deviceId: device.id, status: true, image: true };
+          }
+  
+          const associatedUserInDevice = await prismaClient.usersDevices.create({
+            data: {
+              idUsers: user.id,
+              idDevices: device.id
+            }
+          })
+  
+          if (!associatedUserInDevice) {
+            console.error(`Error in associate user with device: idUser: ${user.id} - idDevice: ${device.id}`);
+            // GERAR LOGS
+            return { userId: user.id, deviceId: device.id, status: false, image: false };
+          }
+  
+          return { userId: user.id, deviceId: device.id, status: true, image: true };
+  
         }
-  
-        //Caso o usuario tenha uma imagem realiza o cadastro.
-        userImage ? await userDevice.setUserImage(userImage, newUserDevice.ids) : null
 
-        // Retorno os dados cadastrados
-        const res = {userId: user.id, deviceId: device.id, status: true}
-        return res
-        
+
+
+        // Caso o usuario não esteja cadastrado no dispositivo, verifica se ele está cadastrado no banco de dados, caso não esteja, cadastra e retorno a função
+        const userAssociatedDivice = await prismaClient.usersDevices.findUnique({
+          where: {
+            idUsers_idDevices: {
+              idUsers: user.id,
+              idDevices: device.id
+            }
+          }
+        }) ?? await prismaClient.usersDevices.create({
+          data: {
+            idUsers: user.id,
+            idDevices: device.id
+          }
+        })
+
+
+        if (!userAssociatedDivice) {
+          console.error(`Error in associate user with device: idUser: ${user.id} - idDevice: ${device.id}`);
+          //Gerar log
+          return { userId: user.id, deviceId: device.id, status: false, image: false };
+        }
+
+        // Cadastrando o usuario no dispositivo
+        const createdUserInDevice = await userDevice.createUser();
+
+        if (!createdUserInDevice.id) {
+          console.error(`Error in create user in device: idUser: ${user.id} - idDevice: ${device.id}`);
+          // Apagar usuario do banco de dados
+          // Gerar logs
+          return { userId: user.id, deviceId: device.id, status: false, image: false };
+        }
+
+
+        //cadastrando a foto do usuario
+        const isUserImage = userImage ? await userDevice.setUserImage(userImage) : false;
+
+        if (!isUserImage) {
+          console.error(`(IMAGE ERROR) Error in set user image in device: idUser: ${user.id} - idDevice: ${device.id}`);
+          // Gerar logs
+          return { userId: user.id, deviceId: device.id, status: true, image: false };
+        }
+
+        if (!isUserImage.status) {
+          console.error(`Error in set user image in device: idUser: ${user.id} - idDevice: ${device.id}`);
+          // Gerar logs
+          return { userId: user.id, deviceId: device.id, status: false, image: false };
+        }
+
+
+        // Logout do dispositivo
+        await authDevice.logout(session.session);
   
+  
+        return { userId: user.id, deviceId: device.id, status: true, image: true }
       })
     )
 
-
-    res.status(201).json(newUserDevices)
+    return res.status(201).json(newUserDevices)
 
   };
+
+
+
+  // RETORNO OS USUARIOS
 
   async read(req: Request, res: Response) {
 
   };
 
-  async update(req: Request, res: Response) {
-
-  };
-
-  async delete(req: Request, res: Response) {
-
-  };
 
 }

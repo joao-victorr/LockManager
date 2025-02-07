@@ -53,3 +53,13 @@ export class UsersController {
     // Implementação da deleção
   }
 }
+
+
+
+
+/*
+
+Esta rota permite realizar o cadastro do usuario sem associa-lo a um equipamento, sendo poossivel cadastrar com ou sem foto, para que seja feita a associação em outra função.
+
+
+*/

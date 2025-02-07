@@ -7,7 +7,7 @@ import { User } from './Pages/User'
 import { useContext } from 'react'
 import { AuthContext } from './Contexts/Auth/AuthContext'
 import { RequireAuth } from './Contexts/Auth/RequireAuth'
-import { AccessPage } from './Pages/Access/Access'
+import { Access } from './Pages/Access/Access'
 import { Home } from './Pages/Home'
 import { Login } from './Pages/Login'
 
@@ -24,7 +24,7 @@ export const App = () => {
       <Route path="/" element={auth.user? <Home /> : <Login />}> </Route>
       <Route path="/devices" element={<RequireAuth><Devices /></RequireAuth>} />
       <Route path="/user" element={<RequireAuth><User /></RequireAuth>}/>
-      <Route path="/access" element={<RequireAuth><AccessPage /></RequireAuth>}/>
+      <Route path="/access" element={<RequireAuth><Access /></RequireAuth>}/>
     </Routes>
   )
 }

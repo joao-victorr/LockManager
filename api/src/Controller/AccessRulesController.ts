@@ -1,5 +1,4 @@
 import type { Request, Response } from 'express';
-import { createAccessRulesDevices } from '../DevicesController/AccessRules/CreateAccessRules';
 import { prismaClient } from '../databases/PrismaClient';
 import { BadResquestError } from '../helpers/apiErrors';
 
