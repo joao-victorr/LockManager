@@ -25,7 +25,7 @@ const userWebController = new UserWebController;
 const usersController = new UsersController;
 const devicesController = new DevicesController;
 // const groupController = new GroupsController;
-// const timesController = new TimesController;
+const timesController = new TimesController;
 // const accessRulesController = new AcccessRulesController;
 const userDevicesController = new UserDevicesController();
 // const usersGroupsController = new UsersGroupsController;
@@ -59,7 +59,8 @@ router.post('/user_devices', privateRouter, userDevicesController.create);
 
 // router.post('/user_group', privateRouter, usersGroupsController.create);
 
-// router.post('/times', privateRouter, timesController.create);
+router.post('/times', privateRouter, timesController.create);
+router.get('/times', privateRouter, timesController.read);
 
 // router.post('/access_rules', privateRouter, accessRulesController.create);
 

@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Modal } from "../../Components/Modal/Modal";
-import type { TimeSpans, TimeZones } from "../../Types/AccessDayTimesSchema";
+import { ToolBar } from "../../Components/ToolBar";
+import type { NewTimeZones, TimeSpans, TimeZones } from "../../Types/AccessDayTimesSchema";
 import type { DeviceBasicInfo } from "../../Types/Device";
-import { AccessSearch } from "./AccessSeach";
+import { UseApi } from "../../hooks/useApi";
 import { AccessTableTimeZones } from "./AccessTableTimeZones";
 import { AccessTimesZones } from "./AccessTimesZones";
+
+
+const timeZonesApi = new UseApi().TimeZonesApi
 
 
 export const Access = () => {
@@ -16,28 +20,69 @@ export const Access = () => {
     const [isTimeZonesModalOpen, setIsTimeZonesModalOpen] = useState(false);
     const [modifyTimeZonesId, setModifyTimeZonesId] = useState<number | null>(null);
 
+    const [dataTimeZones, setDataTimeZones] = useState<Array<TimeZones>>([]);
+
+
+
+    const getTimeZones = useCallback(async () => {
+      const res = await timeZonesApi.getTimeZones();
+      if (res === null) {
+        console.error("Dados não encontrados");
+        return;
+      }
+      console.log(res);
+      setDataTimeZones(res);
+    }, []);
+    
+    useEffect(() => {
+      getTimeZones();
+    }, [getTimeZones]);
+    
     
 
-    const creatNewHors = () => {
+    const creatNewHors = async () => {
 
-      if (newHors.length === 0 || nameTimeZones === null || selectDevices.length === 0) {
+      if (newHors.length === 0 || nameTimeZones === "" || selectDevices.length === 0) {
         alert("Todos os campos devem estar preenchidos!");
         return;
       }
 
-      const newTimeZones: Omit<TimeZones, "id"> & Partial<Pick<TimeZones, "id">> = { 
+      if (modifyTimeZonesId !== null) {
+        const timeZones: TimeZones = {
+          id: modifyTimeZonesId,
+          name: nameTimeZones,
+          timeSpans: newHors,
+          devices: selectDevices,
+        }
+        const res = await timeZonesApi.updateTimeZones(timeZones);
+
+        setIsTimeZonesModalOpen(false);
+        setNewHors([]);
+        setNameTimeZones("");
+        setSelectDevices([]);
+        getTimeZones()
+        return
+      }
+
+
+
+      // CRIA
+      const newTimeZones: NewTimeZones = {
         name: nameTimeZones,
         timeSpans: newHors,
         devices: selectDevices,
-      };
+      }
+
+      const res = await timeZonesApi.postTimeZones(newTimeZones);
 
 
-
-
+      
       setIsModalOpen(false);
       setNewHors([]);
       setNameTimeZones("");
       setSelectDevices([]);
+      getTimeZones()
+      return
     }
 
     const canceledTimeZone = () => {
@@ -55,20 +100,22 @@ export const Access = () => {
       setModifyTimeZonesId(time.id);
 
 
-      console.log("teste :", time)
+
       setNewHors(time.timeSpans);
       setNameTimeZones(time.name);
       setSelectDevices(time.devices);
+
+      console.log(time.devices)
 
     
     }
 
 return (
     <div className="relative w-full h-full">
-      <AccessSearch props={{ ModalOpen: () => setIsModalOpen(true), onClickDelet: () => {} }}/>
+      <ToolBar props={{ ModalOpen: () => setIsModalOpen(true), onClickDelet: () => {} }}/>
 
       <AccessTableTimeZones props={{
-        data: timeZones,
+        data: dataTimeZones,
         setIsModalOpen: modifyTimeZones
       }}>
         {isTimeZonesModalOpen && (
@@ -114,96 +161,4 @@ return (
 )
 
 }
-
-
-
-
-
-const timeZones: Array<TimeZones> = [
-  {
-    id: 1,
-    name: "Evento 1",
-    devices: [
-      {
-        id: "sdvsd",
-        name: "Dispositivo 1"
-      }
-    ],
-    timeSpans: [
-      {
-        id: 1,
-        startHors: 0,
-        endHors: 86399,
-        daysOfWeek: {
-          sun: false,
-          mon: false,
-          tue: false,
-          wed: false,
-          thu: false,
-          fri: false,
-          sat: false,
-        },
-      },
-      {
-        id: 2,
-        startHors: 0,
-        endHors: 46399,
-        daysOfWeek: {
-          sun: true,
-          mon: false,
-          tue: false,
-          wed: false,
-          thu: false,
-          fri: false,
-          sat: true,
-        },
-      },
-      {
-        id: 3,
-        startHors: 0,
-        endHors: 46399,
-        daysOfWeek: {
-          sun: true,
-          mon: false,
-          tue: false,
-          wed: false,
-          thu: false,
-          fri: false,
-          sat: true,
-        },
-      }
-    ]
-  },
-  {
-    id: 2,
-    name: "Evento 1",
-    devices: [
-      {
-        id: "sdvsd",
-        name: "Dispositivo 1"
-      }
-    ],
-    timeSpans: [
-      {
-        id: 1,
-        startHors: 0,
-        endHors: 86399,
-        daysOfWeek: {
-          sun: false,
-          mon: false,
-          tue: false,
-          wed: false,
-          thu: false,
-          fri: false,
-          sat: false,
-        },
-      }
-    ]
-  },
-  
-];
-
-
-
-
 

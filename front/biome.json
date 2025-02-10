@@ -13,10 +13,8 @@
 		"enabled": true,
 		"indentStyle": "tab",
 		"indentWidth": 2,
-		"bracketSpacing": true,
 		"lineWidth": 10,
 		"attributePosition": "multiline",
-		"useEditorconfig": true,
 		"lineEnding": "cr"
 	},
 	"organizeImports": {
@@ -24,13 +22,14 @@
 	},
 	"linter": {
 		"enabled": true,
-		"ignore": ["*.json", "*node_modules"],
+		"ignore": ["*.json", "*node_modules*"],
 		"rules": {
 			"recommended": true,
 			"suspicious": {
 				"noExtraNonNullAssertion":"off"
 			},
 			"style": {
+				"useConst": "off",
 				"noNonNullAssertion":"off"
 			}
 		}
@@ -38,7 +37,6 @@
 	"javascript": {
 		"linter": {
 			"enabled": true
-
 		},
 		"formatter": {
 			"quoteStyle": "double",

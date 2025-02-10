@@ -1,9 +1,11 @@
 import { type Dispatch, type SetStateAction, useState } from "react";
 import { Inp } from "../../Components/Inputs/Inp"
 import { Modal } from "../../Components/Modal/Modal";
+import { ToolBar } from "../../Components/ToolBar";
 import type { TimeSpans } from "../../Types/AccessDayTimesSchema";
+import type { DeviceBasicInfo } from "../../Types/Device";
+import { AccessListDevice } from "./AccessListDevice";
 import { AccessNewTimeSpans } from "./AccessNewTimeSpans";
-import { AccessSearch } from "./AccessSeach"
 import { AccessTableTimeSpans } from "./AccessTableTimeSpans";
 
 
@@ -13,8 +15,8 @@ type Props = {
     setData: React.Dispatch<React.SetStateAction<Array<TimeSpans>>>;
     nameTimeZones: string;
     setNameTimeZones: Dispatch<SetStateAction<string>>;
-    selectDevices: Array<Device>;
-    setSelectDevices: React.Dispatch<React.SetStateAction<Array<Device>>>;
+    selectDevices: Array<DeviceBasicInfo>;
+    setSelectDevices: React.Dispatch<React.SetStateAction<Array<DeviceBasicInfo>>>;
   }
 }
 
@@ -38,15 +40,16 @@ export const AccessTimesZones = ({ props }: Props) => {
       id: modifyTimeSpansId ?? (props.data.length + 1), // Para evitar IDs duplicados
       startHors,
       endHors,
-      daysOfWeek: {
-        sun: selectedDays.includes("sun"),
-        mon: selectedDays.includes("mon"),
-        tue: selectedDays.includes("tue"),
-        wed: selectedDays.includes("wed"),
-        thu: selectedDays.includes("thu"),
-        fri: selectedDays.includes("fri"),
-        sat: selectedDays.includes("sat"),
-      },
+      sun: selectedDays.includes("sun"),
+      mon: selectedDays.includes("mon"),
+      tue: selectedDays.includes("tue"),
+      wed: selectedDays.includes("wed"),
+      thu: selectedDays.includes("thu"),
+      fri: selectedDays.includes("fri"),
+      sat: selectedDays.includes("sat"),
+      hol1: selectedDays.includes("hol1"),
+      hol2: selectedDays.includes("hol2"),
+      hol3: selectedDays.includes("hol3")
     };
   
     if (modifyTimeSpansId !== null) {
@@ -84,7 +87,7 @@ export const AccessTimesZones = ({ props }: Props) => {
     
   }
 
-  const handleSelectDevice = (device: Device) => {
+  const handleSelectDevice = (device: DeviceBasicInfo) => {
 
     const isDeviceSelected = props.selectDevices.some((item) => item.id === device.id)
 
@@ -102,41 +105,16 @@ export const AccessTimesZones = ({ props }: Props) => {
 
     setStartHors(time.startHors);
     setEndHors(time.endHors);
-    setSelectedDays(Object.entries(time.daysOfWeek).filter(([_, value]) => value).map(([key]) => key));
+    setSelectedDays(Object.entries(time).filter(([_, value]) => value).map(([key]) => key));
   }
 
 
   return (
     <div className="relative flex flex-col gap-4 justify-between">
       <Inp props={{ type:"text", placeholder: "Digite o Nome do Horário", value: props.nameTimeZones, onChange: props.setNameTimeZones }} />
-      <AccessSearch props={{ ModalOpen: () => setIsModalOpen(true), onClickDelet: () => {} }}/>
+      <ToolBar props={{ ModalOpen: () => setIsModalOpen(true), onClickDelet: () => {} }}/>
 
-
-      <section className="flex flex-row gap-4 overflow-x-auto">
-        {dataDevice.map((device: Device) => {
-          const isChecked = props.selectDevices.some((item) => device.id === item.id);
-          return (
-            <label
-              key={device.id}
-              className={`p-3 my-2 border rounded-lg cursor-pointer transition-colors duration-200 ${
-                isChecked
-                  ? "bg-blue-500 text-white"
-                  : "bg-white text-gray-700 hover:bg-gray-100"
-              }`}
-            >
-              <span className="whitespace-nowrap">{device.name}</span>
-              <input
-                type="checkbox"
-                checked={isChecked}
-                onChange={() => handleSelectDevice(device)}
-                className="hidden"
-              />
-            </label>
-          );
-        })}
-      </section>
-
-
+      <AccessListDevice props={{ handleSelectDevice: handleSelectDevice, selectDevices: props.selectDevices }} />
 
       <AccessTableTimeSpans props={{ 
         data: props.data,
@@ -184,23 +162,19 @@ export const AccessTimesZones = ({ props }: Props) => {
 
 
 
-type Device = {
-  id: string;
-  name: string;
-}
 
-const dataDevice: Array<Device> = [
-  {
-    id: "sdvsd",
-    name: "Dispositivo 1"
-  },
-  {
-    id: " odfbd34",
-    name: "Dispositivo 2"
-  },
-  {
-    id: "vkwndv",
-    name: "Dispositivo 3"
-  },
+// const dataDevice: Array<DeviceBasicInfo> = [
+//   {
+//     id: "sdvsd",
+//     name: "Dispositivo 1"
+//   },
+//   {
+//     id: " odfbd34",
+//     name: "Dispositivo 2"
+//   },
+//   {
+//     id: "vkwndv",
+//     name: "Dispositivo 3"
+//   },
 
-]
+// ]

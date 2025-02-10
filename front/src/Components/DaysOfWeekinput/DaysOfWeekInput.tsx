@@ -56,9 +56,13 @@ const daysOfWeek = [
   { id: "thu", name: 'Quinta' },
   { id: "fri", name: 'Sexta' },
   { id: "sat", name: 'Sábado' },
+  { id: "hol1", name: 'Feriado 1' },
+  { id: "hol2", name: 'Feriado 2' },
+  { id: "hol3", name: 'Feriado 3' },
 ]
 
 type DaysOfWeek = {
   id: string;
   name: string;
 }
+

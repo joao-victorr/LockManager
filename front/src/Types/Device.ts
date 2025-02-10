@@ -97,7 +97,7 @@ export const DeviceSchema = z.object({
   id: z.string(),
   name: z.string(),
   ip: z.string(),
-  users: z.string(),
+  user: z.string(),
   UsersDevices: z.array(z.string()),
   GroupsDevices: z.array(z.any()), // Atualizaremos isso depois
   password: z.string(),
@@ -111,6 +111,7 @@ export type Device = z.infer<typeof DeviceSchema>;
 export const DeviceBasicInfoSchema = DeviceSchema.pick({
   id: true,
   name: true,
+  status: true
 });
 
 // Inferindo o tipo DeviceBasicInfo

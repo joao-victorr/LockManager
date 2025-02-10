@@ -107,23 +107,24 @@ model timeZonesDevices {
   idTimeZones Int
   timeZones   timeZones @relation(fields: [idTimeZones], references: [id])
 
+  @@unique([idTimeZones, idDevices])
   @@map("timeZonesDevices")
 }
 
 model timeSpans {
   id               Int                @id @default(autoincrement())
-  start            Int
-  end              Int
-  sun              Int
-  mon              Int
-  tue              Int
-  wed              Int
-  thu              Int
-  fri              Int
-  sat              Int
-  hol1             Int
-  hol2             Int
-  hol3             Int
+  startHors        Int
+  endHors          Int
+  sun              Boolean
+  mon              Boolean
+  tue              Boolean
+  wed              Boolean
+  thu              Boolean
+  fri              Boolean
+  sat              Boolean
+  hol1             Boolean
+  hol2             Boolean
+  hol3             Boolean
   timeZonesId      Int
   timeZones        timeZones          @relation(fields: [timeZonesId], references: [id])
   timeSpansDevices timeSpansDevices[]
@@ -133,12 +134,12 @@ model timeSpans {
 
 model timeSpansDevices {
   id          Int       @id @default(autoincrement())
-  code        Int
   idDevices   String
   devices     devices   @relation(fields: [idDevices], references: [id])
   idTimeSpans Int
   timeSpans   timeSpans @relation(fields: [idTimeSpans], references: [id])
 
+  @@unique([idTimeSpans, idDevices])
   @@map("timeSpansDevices")
 }
 

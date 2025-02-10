@@ -1,5 +1,5 @@
-import { Btn } from "../../Components/Buttons/Btn"
-import { Inp } from "../../Components/Inputs/Inp"
+import { Btn } from "./Buttons/Btn"
+import { Inp } from "./Inputs/Inp"
 
 
 
@@ -10,7 +10,7 @@ type Props = {
   }
 }
 
-export const AccessSearch = ({ props }: Props) => {
+export const ToolBar = ({ props }: Props) => {
 
 
   return (

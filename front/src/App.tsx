@@ -1,7 +1,7 @@
 // import { useState } from 'react'
 import { Route, Routes } from 'react-router-dom'
 
-import { Devices } from './Pages/Devices'
+import { Devices } from './Pages/Devices/Devices'
 import { User } from './Pages/User'
 
 import { useContext } from 'react'

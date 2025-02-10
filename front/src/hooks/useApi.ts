@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { TimeZonesApi } from './Access/Access';
 import { AuthApi } from './AuthApi/AuthApi';
 import { DeviceApi } from './DeviceApi/DivecesApi';
 import { DevicesGroupsApi } from './GroupsAPi/DevicesGroupsApi';
@@ -29,6 +30,8 @@ export class UseApi {
   devicesGroupsApi = DevicesGroupsApi;
 
 
-  userGroupsApi = UserGroupsApi
+  userGroupsApi = UserGroupsApi;
+
+  TimeZonesApi = TimeZonesApi;
 
 }
