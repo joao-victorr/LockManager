@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
-import { type Prisma, prismaClient } from '../databases/PrismaClient';
-import { ApiError, BadResquestError } from '../helpers/apiErrors';
+// import { type Prisma, prismaClient } from '../databases/PrismaClient';
+// import { ApiError, BadResquestError } from '../helpers/apiErrors';
 
 export class GroupsController {
   

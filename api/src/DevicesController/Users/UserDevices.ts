@@ -1,7 +1,7 @@
-import axios, { type AxiosRequestHeaders, AxiosHeaders, type AxiosResponse } from 'axios';
+import { AxiosHeaders, type AxiosRequestHeaders, type AxiosResponse } from 'axios';
 import axiosInstance from "../../helpers/AxiosInstance";
 import { httpCodeError } from "../../helpers/AxiosInstance";
-import type { Devices } from '../../helpers/types';
+// import type { Devices } from '../../helpers/types';
 
 type User = {
     id: number;

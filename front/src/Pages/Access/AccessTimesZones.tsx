@@ -38,6 +38,7 @@ export const AccessTimesZones = ({ props }: Props) => {
     const newTimeSpans: TimeSpans = {
       // 
       id: modifyTimeSpansId ?? (props.data.length + 1), // Para evitar IDs duplicados
+      timeZonesId: 0, //// Verificar o type que esta sendo posto, para que seja possivel retiar esse ID 
       startHors,
       endHors,
       sun: selectedDays.includes("sun"),

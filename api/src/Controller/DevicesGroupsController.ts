@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { prismaClient } from '../databases/PrismaClient';
+// import { prismaClient } from '../databases/PrismaClient';
 
 export class DevicesGroupsController {
 

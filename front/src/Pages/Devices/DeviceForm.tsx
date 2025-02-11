@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Btn } from "../../Components/Buttons/Btn";
+// import { Btn } from "../../Components/Buttons/Btn";
 import { Inp } from "../../Components/Inputs/Inp";
 
 const DeviceForm = () => {

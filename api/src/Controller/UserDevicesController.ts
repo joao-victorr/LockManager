@@ -2,7 +2,6 @@ import type { Request, Response } from 'express';
 import { AuthDevice } from '../DevicesController/LoginDevice';
 import { UserDevice } from '../DevicesController/Users/UserDevices';
 import { prismaClient } from '../databases/PrismaClient';
-import { httpCodeError } from '../helpers/AxiosInstance';
 import { ApiError, BadResquestError } from '../helpers/apiErrors';
 import { getImage } from '../scripts/SalveImage';
 

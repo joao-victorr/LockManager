@@ -1,6 +1,6 @@
 import type { AxiosError, AxiosResponse } from "axios";
 import axiosInstance from "../helpers/AxiosInstance";
-import { ApiError } from "../helpers/apiErrors";
+// import { ApiError } from "../helpers/apiErrors";
 
 
 // Classe AuthDevice

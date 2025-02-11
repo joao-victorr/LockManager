@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
-import { prismaClient } from '../databases/PrismaClient';
-import { ApiError, BadResquestError } from '../helpers/apiErrors';
+// import { prismaClient } from '../databases/PrismaClient';
+// import { ApiError, BadResquestError } from '../helpers/apiErrors';
 import type {  } from '../helpers/types';
 
 

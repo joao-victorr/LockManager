@@ -54,7 +54,7 @@ export const Access = () => {
           timeSpans: newHors,
           devices: selectDevices,
         }
-        const res = await timeZonesApi.updateTimeZones(timeZones);
+        await timeZonesApi.updateTimeZones(timeZones);
 
         setIsTimeZonesModalOpen(false);
         setNewHors([]);
@@ -73,7 +73,7 @@ export const Access = () => {
         devices: selectDevices,
       }
 
-      const res = await timeZonesApi.postTimeZones(newTimeZones);
+      await timeZonesApi.postTimeZones(newTimeZones);
 
 
       

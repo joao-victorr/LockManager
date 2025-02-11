@@ -1,4 +1,4 @@
-import axios, { type AxiosRequestHeaders, AxiosHeaders, type AxiosResponse } from 'axios';
+import { AxiosHeaders, type AxiosRequestHeaders, type AxiosResponse } from 'axios';
 import axiosInstance from "../../helpers/AxiosInstance";
 import type { TimeSpans, TimeZonesBasicInfo } from '../../helpers/Types/Times';
 
