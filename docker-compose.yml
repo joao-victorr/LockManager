@@ -34,8 +34,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    env_file:
-      - .env
+
 
   front:
     build: ./front
@@ -45,6 +44,7 @@ services:
       - "8080:80"
     depends_on:
       - api
+
 
 volumes:
   api_data:
