@@ -1,10 +1,12 @@
+import path from 'path';
 import type { Request, Response } from 'express';
 import { prismaClient } from '../databases/PrismaClient';
-import { saveImageUser } from '../scripts/SalveImage'; // Função para salvar a imagem
+import { BadResquestError } from '../helpers/apiErrors';
+import { getImage, saveImageUser } from '../scripts/SalveImage'; // Função para salvar a imagem
 
 export class UsersController {
 
-  // Método para criar um usuário
+  
   async create(req: Request, res: Response) {
     const image = req.file?.buffer; // Obtém a imagem do corpo da requisição (arquivo)
     const name = req.body.name; // Obtém o nome do corpo da requisição
@@ -38,19 +40,59 @@ export class UsersController {
     
   }
 
-  // Método para ler dados de usuário (ainda não implementado)
+  
   async read(req: Request, res: Response) {
-    // Implementação da leitura
+    
+    const allUsers = await prismaClient.users.findMany({
+      include: {
+        _count: {
+          select: {
+            usersGroups: true,
+            usersDevices: true
+          }
+        }
+      }
+    });
+
+    return res.json(allUsers).status(200)
+
   }
 
-  // Método para atualizar dados de usuário (ainda não implementado)
+ 
   async update(req: Request, res: Response) {
-    // Implementação da atualização
+    
   }
 
-  // Método para deletar dados de usuário (ainda não implementado)
   async delete(req: Request, res: Response) {
-    // Implementação da deleção
+    
+  }
+
+  async readImages(req: Request, res: Response) {
+
+    const imageName = req.query.name;
+
+    if (!imageName) {
+      throw new BadResquestError("Image name is requeri")
+    }
+
+    const verifyImageName = await prismaClient.users.findUnique({
+      where: {
+        image: imageName as string
+      },
+      select: {
+        image: true
+      }
+    })
+
+    if (!verifyImageName?.image) {
+      throw new BadResquestError("Image not found")
+    }
+
+    const imagePath = path.resolve(__dirname, `../../images/${verifyImageName.image}`);
+
+    res.sendFile(imagePath);
+
+
   }
 }
 

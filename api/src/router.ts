@@ -1,5 +1,5 @@
 
-import { Router } from 'express';
+import { type Request, type Response, Router } from 'express';
 import multer from 'multer';
 
 import { privateRouter } from './middleware/PassportMiddleware'
@@ -31,6 +31,13 @@ const userDevicesController = new UserDevicesController();
 // const usersGroupsController = new UsersGroupsController;
 // const groupsDevicesController = new DevicesGroupsController;
 
+
+
+router.get("/ping", (req: Request, res: Response) => {
+  return res.send("Pong");
+})
+
+
 router.post('/login', authController.login);
 router.get('/token', authController.token);
 
@@ -40,8 +47,10 @@ router.delete('/user_web', privateRouter, userWebController.delete);
 router.put('/user_web', privateRouter, userWebController.update);
 
 router.post('/users', privateRouter, upload.single("image"), usersController.create);
-// router.get('/users', privateRouter, usersController.read);
+router.get('/users', privateRouter, usersController.read);
 // router.delete('/users', privateRouter, usersController.delete);
+
+router.get('/users/image', privateRouter, usersController.readImages)
 
 router.post('/device', privateRouter, devicesController.create);
 router.get('/device', privateRouter, devicesController.read);

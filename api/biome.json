@@ -13,10 +13,8 @@
 		"enabled": true,
 		"indentStyle": "tab",
 		"indentWidth": 2,
-		"bracketSpacing": true,
 		"lineWidth": 10,
 		"attributePosition": "multiline",
-		"useEditorconfig": true,
 		"lineEnding": "cr"
 	},
 	"organizeImports": {

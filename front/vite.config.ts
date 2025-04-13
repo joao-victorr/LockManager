@@ -11,7 +11,7 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',    // Aceita conexões externas
-    port: 5173,         // Porta padrão do Vite
+    port: 8080,         // Porta padrão do Vite
     strictPort: true,   // Garante que a porta seja sempre a mesma
   }
 });

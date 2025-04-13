@@ -1,6 +1,6 @@
+import { convertToTimeString, convertToTimestamp } from "../../../public/assets/script/convertTime";
 import DaysOfWeekInput from "../../Components/DaysOfWeekinput/DaysOfWeekInput"
 import { Inp } from "../../Components/Inputs/Inp"
-import { convertToTimeString, convertToTimestamp } from "../../assets/script/convertTime";
 
 
 type Props = {

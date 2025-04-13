@@ -1,7 +1,4 @@
 
-
-
-
 // Converte de "HH:mm" para timestamp
 export const convertToTimestamp = (input: string): number => {
   const [hours, minutes] = input.split(':').map(Number);

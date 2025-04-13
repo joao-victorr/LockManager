@@ -2,7 +2,7 @@
 import { Route, Routes } from 'react-router-dom'
 
 import { Devices } from './Pages/Devices/Devices'
-import { User } from './Pages/User'
+import { User } from './Pages/User/User'
 
 import { useContext } from 'react'
 import { AuthContext } from './Contexts/Auth/AuthContext'

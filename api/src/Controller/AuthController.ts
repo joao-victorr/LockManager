@@ -9,6 +9,9 @@ import { BadResquestError, UnauthorazedError } from '../helpers/apiErrors';
 
 export class AuthController {
   async login(req: Request, res: Response) {
+
+    console.log(req.body);
+
     if(!req.body.email && !req.body.password) {
       throw new BadResquestError("Data Not Found")
     }

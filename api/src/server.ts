@@ -25,7 +25,7 @@ server.use(passport.initialize());
 
 
 server.use("/ping", (req: Request, res: Response) => {
-    res.send("Pong")
+    return res.send("Pong")
 })
 
 server.use(router)
@@ -37,6 +37,6 @@ server.use((req: Request, res: Response) => {
 
 server.use(ErrorMiddleware)
 
-server.listen(process.env.PORT, () => {
+server.listen(process.env.PORT ?? 3000, () => {
     console.log(`Servidor rodando na porta ${process.env.PORT}`);
 });

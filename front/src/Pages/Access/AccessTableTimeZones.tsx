@@ -1,93 +1,86 @@
 import type { ReactNode } from "react";
+import { convertToTimeString } from "../../../public/assets/script/convertTime";
 import { Btn } from "../../Components/Buttons/Btn";
+import { Table } from "../../Components/Table/Table"; // ajuste o caminho se necessário
 import type { DayOfWeek, TimeZones } from "../../Types/AccessDayTimesSchema";
-import { convertToTimeString } from "../../assets/script/convertTime";
-
 
 type Props = {
   props: {
-    data: Array<TimeZones>
+    data: Array<TimeZones>;
     setIsModalOpen: (time: TimeZones) => void;
   };
   children?: ReactNode;
-}
-
-
+};
 
 export const AccessTableTimeZones = ({ props, children }: Props) => {
+  const { data, setIsModalOpen } = props;
 
+  const renderBool = (val: boolean) => (val ? "✔" : "✘");
+  const boolClass = (val: boolean) => (val ? "text-green-500" : "text-red-400");
 
-  const data = props.data;
+  const headers = [
+    { content: <input type="checkbox" className="w-4 h-4" /> },
+    { content: "Nome" },
+    { content: "Início" },
+    { content: "Fim" },
+    { content: "Domingo" },
+    { content: "Segunda" },
+    { content: "Terça" },
+    { content: "Quarta" },
+    { content: "Quinta" },
+    { content: "Sexta" },
+    { content: "Sábado" },
+    { content: "Feriado 1" },
+    { content: "Feriado 2" },
+    { content: "Feriado 3" },
+    { content: "Editar" },
+  ];
+
+  const rows = data.flatMap((item) =>
+    item.timeSpans.map((times, index) => {
+      const bools = ["sun", "mon", "tue", "wed", "thu", "fri", "sat", "hol1", "hol2", "hol3"];
+
+      const cells = [];
+
+      if (index === 0) {
+        cells.push(
+          {
+            content: <input type="checkbox" className="w-4 h-4" />,
+            rowSpan: item.timeSpans.length,
+          },
+          {
+            content: item.name,
+            rowSpan: item.timeSpans.length,
+          }
+        );
+      }
+
+      cells.push(
+        { content: convertToTimeString(times.startHors) },
+        { content: convertToTimeString(times.endHors) },
+        ...bools.map((key) => ({
+          content: renderBool(times[key as keyof DayOfWeek]),
+          className: boolClass(times[key as keyof DayOfWeek]),
+        }))
+      );
+
+      if (index === 0) {
+        cells.push({
+          content: (
+            <Btn props={{ text: "Editar", type: "button", onClick: () => setIsModalOpen(item) }} />
+          ),
+          rowSpan: item.timeSpans.length,
+        });
+      }
+
+      return cells;
+    })
+  );
 
   return (
     <section>
-      <table className="relative w-full table-auto border-collapse border border-gray-300">
-        <thead className="bg-amber-600 text-white">
-            <tr>
-              <th className="p-2 border border-gray-300">
-                  <input type="checkbox" className="w-4 h-4" />
-              </th>
-              <th className="p-2 border border-gray-300">Nome</th>
-              <th className="p-2 border border-gray-300">inicio</th>
-              <th className="p-2 border border-gray-300">Fim</th>
-              <th className="p-2 border border-gray-300">Domingo</th>
-              <th className="p-2 border border-gray-300">Segunda</th>
-              <th className="p-2 border border-gray-300">Terça</th>
-              <th className="p-2 border border-gray-300">Quarta</th>
-              <th className="p-2 border border-gray-300">Quinta</th>
-              <th className="p-2 border border-gray-300">Sexta</th>
-              <th className="p-2 border border-gray-300">Sabado</th>
-              <th className="p-2 border border-gray-300">Feriado 1</th>
-              <th className="p-2 border border-gray-300">Feriado 2</th>
-              <th className="p-2 border border-gray-300">Feriado 3</th>
-              <th className="p-2 border border-gray-300">Editar</th>
-            </tr>
-        </thead>
-        <tbody className="overflow-y-scroll">
-          { data.length > 0 ? (
-              data.map((item) =>
-                item.timeSpans.map((times, index) => (
-                  <tr key={`${item.id}-${times.id}-${index}`} className="hover:bg-gray-100">
-                    {index === 0 && (
-                      <>
-                        <td className="p-2 border border-gray-300 text-center" rowSpan={item.timeSpans.length}>
-                          <input type="checkbox" className="w-4 h-4" />
-                        </td>
-                        <td className="p-2 border border-gray-300 text-center" rowSpan={item.timeSpans.length}>
-                          {item.name}
-                        </td>
-                      </>
-                    )}
-                    <td className="p-2 border border-gray-300 text-center">{convertToTimeString(times.startHors)}</td>
-                    <td className="p-2 border border-gray-300 text-center">{convertToTimeString(times.endHors)}</td>
-                    {["sun", "mon", "tue", "wed", "thu", "fri", "sat", "hol1", "hol2", "hol3"].map((day) => (
-                      <td
-                        key={day}
-                        className={`p-2 border border-gray-300 text-center ${
-                          times[day as keyof DayOfWeek] ? "text-green-500" : "text-red-400"
-                        }`}
-                      >
-                        {times[day as keyof DayOfWeek] ? "✔" : "✘"}
-                      </td>
-                    ))}
-                    {index === 0 && (
-                      <td className="p-2 border border-gray-300 text-center" rowSpan={item.timeSpans.length}>
-                        <Btn props={{ text: "Editar", type: "button", onClick: () => props.setIsModalOpen(item) }} />
-                      </td>
-                    )}
-                  </tr>
-                ))
-              )
-            ) : (
-              <tr>
-                <td colSpan={12} className="text-center text-gray-500">
-                  Nenhum horário cadastrado
-                </td>
-              </tr>
-            )}
-        </tbody>          
-      </table>
-      { children }
+      <Table headers={headers} rows={rows} className="my-4" />
+      {children}
     </section>
-  )
-}
+  );
+};

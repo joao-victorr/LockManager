@@ -36,7 +36,8 @@ model devices {
 model users {
   id           Int            @id @default(autoincrement())
   name         String
-  image        String?
+  image        String?        @unique
+  isActive     Boolean        @default(true)
   beginTime    Int?
   endTime      Int?
   usersDevices usersDevices[]

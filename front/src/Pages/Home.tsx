@@ -1,6 +1,6 @@
 
 import { useContext, useState } from 'react'
-import noUserIcon from '../assets/icons/user.png'
+import noUserIcon from '../../public/assets/icons/user.png'
 
 import { Link } from 'react-router-dom'
 import { AuthContext } from '../Contexts/Auth/AuthContext'

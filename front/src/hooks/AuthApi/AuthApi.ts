@@ -15,12 +15,16 @@ export const AuthApi = {
   },
 
   login: async (data: LoginData): Promise<LoginRes> => {
+    console.log(import.meta.env.VITE_API_BASE_URL)
 
+    console.log(data)
     const res = await api.post('/login', {
       Headers: 'Content-Type/application/json',
       email: data.email,
       password: data.password,
     })
+
+    console.log("res: ", res)
 
     return res.data as LoginRes;
     

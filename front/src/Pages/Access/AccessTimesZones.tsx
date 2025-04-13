@@ -101,6 +101,9 @@ export const AccessTimesZones = ({ props }: Props) => {
   }
 
   const modifyTimeSpans = (time: TimeSpans) => {
+
+    console.log("teste")
+
     setIsTimeSpansModalOpen(true);
     setModifyTimeSpansId(time.id);
 
