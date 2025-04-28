@@ -58,7 +58,7 @@ export class TimeDevice {
             object: "time_zones",
             values: [
                 {
-                    id: timeZones.id + 100 ,
+                    id: timeZones.id + 1000 ,
                     name: timeZones.name,
                 },
             ],
@@ -85,7 +85,7 @@ export class TimeDevice {
             object: "time_spans",
             values: [
                 {
-                    id: timeSpans.id + 100,
+                    id: timeSpans.id + 1000,
                     time_zone_id: timeSpans.timeZonesId + 100,
                     start: timeSpans.startHors,
                     end: timeSpans.endHors,

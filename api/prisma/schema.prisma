@@ -8,10 +8,12 @@ datasource db {
 }
 
 model usersWeb {
-  id       String @id @default(cuid())
+  id       String  @id @default(cuid())
   name     String
-  email    String @unique
+  email    String  @unique
   password String
+  isActive Boolean @default(true)
+  isDelete Boolean @default(false)
 
   @@map("usersWeb")
 }
@@ -23,6 +25,7 @@ model devices {
   user             String
   password         String
   status           Boolean            @default(true)
+  isDelete         Boolean            @default(false)
   usersDevices     usersDevices[]
   groupsDevices    groupsDevices[]
   timeZonesDevices timeZonesDevices[]
@@ -38,6 +41,7 @@ model users {
   name         String
   image        String?        @unique
   isActive     Boolean        @default(true)
+  isDelete     Boolean        @default(false)
   beginTime    Int?
   endTime      Int?
   usersDevices usersDevices[]
@@ -62,6 +66,7 @@ model usersGroups {
 model groups {
   id            Int             @id @default(autoincrement())
   name          String
+  isDelete      Boolean         @default(false)
   groupsDevices groupsDevices[]
   accessRules   accessRules[]
   usersGroups   usersGroups[]
@@ -94,6 +99,7 @@ model groupsDevices {
 model timeZones {
   id               Int                @id @default(autoincrement())
   name             String
+  isDelete         Boolean            @default(false)
   timeSpans        timeSpans[]
   timeZonesDevices timeZonesDevices[]
   accessRules      accessRules[]
@@ -114,6 +120,7 @@ model timeZonesDevices {
 
 model timeSpans {
   id               Int                @id @default(autoincrement())
+  isDelete         Boolean            @default(false)
   startHors        Int
   endHors          Int
   sun              Boolean
@@ -146,7 +153,6 @@ model timeSpansDevices {
 
 model accessRules {
   id          Int       @id @default(autoincrement())
-  code        Int
   idDevices   String
   devices     devices   @relation(fields: [idDevices], references: [id])
   idTimeZones Int
@@ -154,5 +160,6 @@ model accessRules {
   idGroups    Int
   groups      groups    @relation(fields: [idGroups], references: [id])
 
+  @@unique([idDevices, idGroups, idTimeZones])
   @@map("accessRules")
 }

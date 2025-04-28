@@ -3,15 +3,20 @@ import { z } from 'zod';
 
 // Esquema para Device
 export const DeviceSchema = z.object({
-  id: z.string(),
+  id: z.string().cuid(),
   name: z.string(),
-  ip: z.string(),
-  users: z.string(),
-  UsersDevices: z.array(z.string()),
-  GroupsDevices: z.array(z.any()), // Atualizaremos isso depois
+  ip: z.string().ip(),
+  user: z.string(),
   password: z.string(),
   status: z.boolean(),
-});
+  
+  usersDevices: z.array(z.any()).optional(),
+  groupsDevices: z.array(z.any()).optional(),
+  timeZonesDevices: z.array(z.any()).optional(),
+  timeSpansDevices: z.array(z.any()).optional(),
+  accessRules: z.array(z.any()).optional(),
+  usersGroups: z.array(z.any()).optional(),
+})
 
 // Inferindo o tipo Device a partir do esquema ZOD
 export type Device = z.infer<typeof DeviceSchema>;

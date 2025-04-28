@@ -10,7 +10,7 @@ export class UserDevicesController {
   async create(req: Request, res: Response) {
     // RECEBENDO DADOS
     const userId = req.body.userId;
-    const devicesId: Array<string> = req.body.devicesId;
+    const devicesId: string[] = req.body.devicesId;
 
     //PROPCURADNO USUARIO NO BANCO DE DADOS
     const user = await prismaClient.users.findUnique({
@@ -40,7 +40,7 @@ export class UserDevicesController {
 
 
     // CADASTRANDO USUARIO NO DISPOSITIVO
-    const newUserDevices = await Promise.all(
+    const newUserDevices = await Promise.allSettled(
       devices.map( async (device) => {
         const authDevice = new AuthDevice(device.ip, device.user, device.password)
         const session = await authDevice.login();

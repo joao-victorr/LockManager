@@ -7,7 +7,7 @@ import { privateRouter } from './middleware/PassportMiddleware'
 import { AcccessRulesController } from './Controller/AccessRulesController';
 import { AuthController } from './Controller/AuthController';
 import { DevicesController } from './Controller/DevicesController';
-import { DevicesGroupsController } from './Controller/DevicesGroupsController';
+import { DevicesGroupsController } from './Controller/GroupDeviceController';
 import { GroupsController } from './Controller/GroupsController';
 import { TimesController } from './Controller/TimesController';
 import { UserDevicesController } from './Controller/UserDevicesController';
@@ -24,12 +24,12 @@ const userWebController = new UserWebController;
 
 const usersController = new UsersController;
 const devicesController = new DevicesController;
-// const groupController = new GroupsController;
+const groupController = new GroupsController;
 const timesController = new TimesController;
-// const accessRulesController = new AcccessRulesController;
-const userDevicesController = new UserDevicesController();
 // const usersGroupsController = new UsersGroupsController;
-// const groupsDevicesController = new DevicesGroupsController;
+const userDevicesController = new UserDevicesController();
+const groupsDevicesController = new DevicesGroupsController;
+const accessRulesController = new AcccessRulesController;
 
 
 
@@ -56,13 +56,14 @@ router.post('/device', privateRouter, devicesController.create);
 router.get('/device', privateRouter, devicesController.read);
 // router.delete('/device', privateRouter, devicesController.delete);
 
-// router.post('/group', privateRouter, groupController.create);
-// router.get('/group', privateRouter, groupController.read);
-// router.delete('/group', privateRouter, groupController.delete);
-
 router.post('/user_devices', privateRouter, userDevicesController.create);
 
-// router.post('/devices_groups', privateRouter, groupsDevicesController.create);
+router.post('/group', privateRouter, groupController.create);
+router.get('/group', privateRouter, groupController.read);
+router.put('/group', privateRouter, groupController.update);
+router.delete('/group', privateRouter, groupController.delete);
+
+router.post('/group/devices', privateRouter, groupsDevicesController.create);
 // router.get('/devices_groups', privateRouter, groupsDevicesController.read);
 // router.delete('/devices_groups', privateRouter, groupsDevicesController.delete);
 
@@ -71,7 +72,7 @@ router.post('/user_devices', privateRouter, userDevicesController.create);
 router.post('/times', privateRouter, timesController.create);
 router.get('/times', privateRouter, timesController.read);
 
-// router.post('/access_rules', privateRouter, accessRulesController.create);
+router.post('/access_rules', privateRouter, accessRulesController.create);
 
 
 

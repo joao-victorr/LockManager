@@ -1,9 +1,12 @@
 import { z } from 'zod';
 
-export const GroupSchema = z.object({
-  id: z.string(),
-  name: z.string(),
+export const SearchGroupSchema = z.object({
+  id: z.coerce.number().optional(),
+  name: z.string().optional()
 });
 
-// Inferindo o tipo Group
-export type Group = z.infer<typeof GroupSchema>;
+// export const includeFieldsGroupSchema = z.object({
+//   groupsDevices: z.boolean().optional(),
+//   accessRules: z.boolean().optional(),
+//   usersGroups: z.boolean().optional(),
+// })

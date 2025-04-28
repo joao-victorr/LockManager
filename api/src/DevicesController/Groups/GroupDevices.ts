@@ -2,33 +2,44 @@ import { AxiosHeaders, type AxiosRequestHeaders, type AxiosResponse } from 'axio
 import axiosInstance from "../../helpers/AxiosInstance";
 import { httpCodeError } from "../../helpers/AxiosInstance";
 import type { ReqError, ReqSuccess } from '../../helpers/Types/ResposeType';
+import { ApiError } from '../../helpers/apiErrors';
 
-type Device = {
-    id: string;
-    ip: string;
-    session: string;
+type ResponseCreateInDevice = {
+  ids: number[];
 }
 
+
 export class GroupDevice {
-    private device: Device;
+    private ip: string;
+    private session: string;
   
-    constructor( device: Device) {
-        this.device = device;
+    constructor( ip: string, session: string) {
+        this.ip = ip;
+        this.session = session;
     }
 
-    private baseUrl(ip: string, uri: string, session: string): string {
-        return `http://${ip}/${uri}session=${session}`;
+    private baseUrl(path: string): string {
+        return `http://${this.ip}/${path}session=${this.session}`;
     }
 
     private async post(
-        uri: string,
+        url: string,
         data: any,
         headers?: AxiosRequestHeaders
       ): Promise<ReqSuccess<AxiosResponse> | ReqError> {
-        const url = this.baseUrl(this.device.ip, uri, this.device.session);
       
         try {
           const response = await axiosInstance.post(url, data, { headers });
+
+          if (response.status >= 400) {
+            throw {
+              response: {
+                data: { message: response.statusText },
+                statusCode: response.status,
+              },
+            };
+          }
+
           return {
             success: true,
             data: response,
@@ -51,20 +62,33 @@ export class GroupDevice {
         }
     }
 
-    async createGroup() {
+    async createGroup(id: number, name: string): Promise<ReqSuccess<ResponseCreateInDevice> | ReqError> {
 
+      const path = "create_objects.fcgi?";
+      const url = this.baseUrl(path);
 
-    //   const payload = {
-    //     object: "users",
-    //     values: [
-    //         {
-    //             id: this.user.id + 1000,
-    //             registration: "",
-    //             name: this.user.name,
-    //             password: this.user.password,
-    //         },
-    //     ],
-    //  };
+      const payload = {
+        object: "groups",
+        values: [
+            {
+                id: id + 1000,
+                name: name,
+            },
+        ],
+     };
+
+     const response = await this.post(url, payload);
+
+     if (response.success) {
+      return {
+        success: true,
+        data: response.data.data
+      };
+     }
+
+     return response
+
+     
 
 
     }
